@@ -1,9 +1,13 @@
 import os
+import re
 import json
 import socket
 import shutil
 from .app import *
 
+
+def check_hostname(hostname):
+    return True if re.match(r'([a-zA-Z0-9]+(\.[a-zA-Z0-9]+)+)', hostname) else False
 
 def convert_hostnames(file_path):
     with open(file_path, 'r+') as json_file:
@@ -12,11 +16,15 @@ def convert_hostnames(file_path):
         length, loop, timeout = 0, 0, 0
 
         for name, value in data_accounts.items():
-            length += len(value)
+            for i in range(len(value)):
+                if check_hostname(data_accounts[name][i]['hostname']) == True:
+                    length += 1
 
         for name, value in data_accounts.items():
             for i in range(len(value)):
                 account = data_accounts[name][i]
+                if check_hostname(account['hostname']) == False:
+                    continue
                 try:
                     if timeout == 3: break
                     log_replace('[Y1][{}/{}] Converting hostnames'.format(app_format(loop+1, align='>', width=len(str(length)), chars='0'), length), log_datetime=True, status='[Y1]INFO')
@@ -25,11 +33,11 @@ def convert_hostnames(file_path):
                     if not host:
                         raise socket.gaierror
                     elif host != account['host']:
-                        log('[G1]{:.<19} [Y1]{:.<20}{:.>36}'.format((account['host'] if account['host'] else '(empty)')+' ', host+' [G1]', ' '+account['hostname']), status='[G1]INFO')
+                        log('[G1]{:.<19} [Y1]{:.<23} {}'.format((account['host'] if account['host'] else '(empty)')+' ', host+' [G1]', account['hostname']), status='[G1]INFO')
                         data_accounts[name][i]['host'] = host
                         timeout = 0
                 except socket.gaierror:
-                    log('[R1][{}/{}] Converting hostnames timeout'.format(app_format(timeout+1, align='>', width=len(str(length)), chars='0'), app_format('3', align='>', width=len(str(length)), chars='0')), status='[R1]INFO')
+                    log('[R1][{}/{}] Converting hostnames error'.format(app_format(timeout+1, align='>', width=len(str(length)), chars='0'), app_format('3', align='>', width=len(str(length)), chars='0')), status='[R1]INFO')
                     timeout = timeout + 1
                 finally:
                     loop = loop + 1
@@ -49,6 +57,8 @@ def generate_accounts(data_accounts):
         for name in data_accounts:
             for x in range(len(data_accounts[name])):
                 account = data_accounts[name][x]
+                if check_hostname(account['hostname']) == False:
+                    continue
                 accounts.append({
                     'name': name,
                     'host': account['host'],

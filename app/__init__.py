@@ -9,7 +9,7 @@ from .ssh_create     import *
 
 
 def main():
-    print('\n\n---\n\n')
+    print('\n\n\n\n')
     system('cls' if name == 'nt' else 'clear')
     print(colors('[G1]{banners}'.format(banners=open(real_path('/data/banners.txt')).read())))
     if version[0] == '2':

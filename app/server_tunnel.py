@@ -23,11 +23,11 @@ class server_tunnel(threading.Thread):
 
         self.do_handshake_on_connect = True
         self.buffer_size = 65535
-        self.timeout = 3
+        self.timeout = 5
         self.daemon = True
 
-    def log(self, value):
-        if not self.silent: log(value, status='[G1]INFO')
+    def log(self, value, status='[G1]INFO'):
+        if not self.silent: log(value, status=status)
 
     def log_replace(self, value):
         if not self.silent: log_replace(value)
@@ -151,9 +151,9 @@ class server_tunnel(threading.Thread):
             self.certificate()
             self.handler()
         except socket.timeout:
-            pass
+            self.log('[R1]Connection timeout', status='[R1]INFO')
         except socket.error:
-            pass
+            self.log('[R1]Connection closed', status='[R1]INFO')
         except Exception as exception:
             self.log_exception(exception)
         finally:
