@@ -1,0 +1,81 @@
+{
+  "servers": [
+    {
+      "name": "www.monthlyssh.com",
+      "head": "/create-ssl/{serverid}/",
+      "post": "/create-ssl.php",
+      "page": "/ssl",
+      "pattern-class": "bs pricing-n2",
+      "pattern-serverid": "ssl/{serverid}/ssl",
+      "pattern-hostname": "<li>{hostname} </li>",
+      "replace-username": "monthlyssh.com-",
+      "replace-password": ""
+    },
+    {
+      "name": "www.sshaccess.com",
+      "head": "/create-ssl-account-server/{serverid}/",
+      "post": "/create-ssl-account.php",
+      "page": "/ssl-server",
+      "pattern-class": "small-12 large-3 medium-3 columns wow fadeInUp",
+      "pattern-serverid": "server/{serverid}/server",
+      "pattern-hostname": "Host Ip : <strong>{hostname}</strong>",
+      "replace-username": "sshaccess.com-",
+      "replace-password": ""
+    },
+    {
+      "name": "www.speedssh.com",
+      "head": "/create-ssl-account-server/{serverid}/",
+      "post": "/create-account-ssl.php",
+      "page": "/ssl-server",
+      "pattern-class": "col-lg-4 col-sm-4",
+      "pattern-serverid": "server/{serverid}/server",
+      "pattern-hostname": "Host IP : {hostname}</a>",
+      "replace-username": "speedssh.com-",
+      "replace-password": ""
+    },
+    {
+      "name": "www.portssh.com",
+      "head": "/create-ssl-server/{serverid}/",
+      "post": "/create-account-ssl.php",
+      "page": "/ssl-server",
+      "pattern-class": "col-sm-4 panel-item",
+      "pattern-serverid": "server/{serverid}/ssl",
+      "pattern-hostname": "Host IP {hostname} </li>",
+      "replace-username": "portssh.com-",
+      "replace-password": ""
+    },
+    {
+      "name": "www.mytunneling.com",
+      "head": "/create-ssh-account-server-ssl/{serverid}/",
+      "post": "/create-account-ssh-ssl.php",
+      "page": "/ssh-ssl",
+      "pattern-class": "col-6 col-sm-6 col-lg-4 alert alert-info server",
+      "pattern-serverid": "ssl/{serverid}/ssl",
+      "pattern-hostname": "Server IP {hostname} </li>",
+      "replace-username": "tunvpn.com-",
+      "replace-password": ""
+    },
+    {
+      "name": "www.jetssh.com",
+      "head": "/create-ssl-server/{serverid}/",
+      "post": "/create-account-ssl.php",
+      "page": "/ssl-server",
+      "pattern-class": "col-sm-6 col-md-3 nopadding",
+      "pattern-serverid": "server/{serverid}/ssl",
+      "pattern-hostname": "<p>Host IP {hostname} </p>",
+      "replace-username": "jetssh.com-",
+      "replace-password": ""
+    },
+    {
+      "name": "www.flyssh.com",
+      "head": "/create-ssl/{serverid}/",
+      "post": "/create-ssl.php",
+      "page": "/ssl-server",
+      "pattern-class": "col-lg-3 col-md-3 col-xs-6",
+      "pattern-serverid": "ssl/{serverid}/server",
+      "pattern-hostname": "Host : <strong>{hostname} </strong>",
+      "replace-username": "_flyssh.com",
+      "replace-password": ""
+    }
+  ]
+}

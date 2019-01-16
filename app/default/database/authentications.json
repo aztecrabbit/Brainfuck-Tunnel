@@ -1,0 +1,36 @@
+{
+  "authentications": [
+    {
+      "username": "aztecrabbit",
+      "password": "aztecrabbit"
+    },
+    {
+      "username": "aztec",
+      "password": "aztec"
+    },
+    {
+      "username": "rabbit",
+      "password": "rabbit"
+    },
+    {
+      "username": "brain",
+      "password": "brain"
+    },
+    {
+      "username": "private",
+      "password": "private"
+    },
+    {
+      "username": "protected",
+      "password": "protected"
+    },
+    {
+      "username": "public",
+      "password": "public"
+    },
+    {
+      "username": "guest",
+      "password": "guest"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+pysocks
+requests
+beautifulsoup4

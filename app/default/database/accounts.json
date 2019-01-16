@@ -1,0 +1,282 @@
+{
+  "accounts": {
+    "www.monthlyssh.com": [
+      {
+        "host": "204.48.23.49",
+        "hostname": "us1.ssl.monthlyssh.com",
+        "username": "monthlyssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "159.65.136.252",
+        "hostname": "sg1.ssl.monthlyssh.com",
+        "username": "monthlyssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "68.183.181.0",
+        "hostname": "sg2.ssl.monthlyssh.com",
+        "username": "monthlyssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "103.56.207.54",
+        "hostname": "id.ssl.monthlyssh.com",
+        "username": "monthlyssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "46.101.152.158",
+        "hostname": "de.ssl.monthlyssh.com",
+        "username": "monthlyssh.com-{username}",
+        "password": "{password}"
+      }
+    ],
+    "www.sshaccess.com": [
+      {
+        "host": "128.199.223.111",
+        "hostname": "sg1.ssl.sshaccess.com",
+        "username": "sshaccess.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "128.199.176.127",
+        "hostname": "sg2.ssl.sshaccess.com",
+        "username": "sshaccess.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "68.183.224.180",
+        "hostname": "sg3.ssl.sshaccess.com",
+        "username": "sshaccess.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "142.93.5.169",
+        "hostname": "us1.ssl.sshaccess.com",
+        "username": "sshaccess.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "206.81.15.214",
+        "hostname": "us2.ssl.sshaccess.com",
+        "username": "sshaccess.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "104.248.125.99",
+        "hostname": "us3.ssl.sshaccess.com",
+        "username": "sshaccess.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "167.99.47.136",
+        "hostname": "nl1.ssl.sshaccess.com",
+        "username": "sshaccess.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "167.99.47.62",
+        "hostname": "nl2.ssl.sshaccess.com",
+        "username": "sshaccess.com-{username}",
+        "password": "{password}"
+      }
+    ],
+    "www.speedssh.com": [
+      {
+        "host": "206.81.9.174",
+        "hostname": "us1.ssl.speedssh.com",
+        "username": "speedssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "178.128.93.58",
+        "hostname": "sg1.ssl.speedssh.com",
+        "username": "speedssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "68.183.236.154",
+        "hostname": "sg2.ssl.speedssh.com",
+        "username": "speedssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "104.248.147.99",
+        "hostname": "sg3.ssl.speedssh.com",
+        "username": "speedssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "104.248.158.57",
+        "hostname": "sg4.ssl.speedssh.com",
+        "username": "speedssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "178.128.51.121",
+        "hostname": "sg5.ssl.speedssh.com",
+        "username": "speedssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "157.230.34.182",
+        "hostname": "sg6.ssl.speedssh.com",
+        "username": "speedssh.com-{username}",
+        "password": "{password}"
+      }
+    ],
+    "www.portssh.com": [
+      {
+        "host": "142.93.203.113",
+        "hostname": "ssl.us1.portssh.com",
+        "username": "portssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "178.128.89.207",
+        "hostname": "ssl.sg1.portssh.com",
+        "username": "portssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "128.199.254.247",
+        "hostname": "ssl.sg2.portssh.com",
+        "username": "portssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "178.128.85.84",
+        "hostname": "ssl.sg3.portssh.com",
+        "username": "portssh.com-{username}",
+        "password": "{password}"
+      }
+    ],
+    "www.mytunneling.com": [
+      {
+        "host": "159.89.205.205",
+        "hostname": "sgdo1.ssl.ipmy.co",
+        "username": "tunvpn.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "178.128.222.179",
+        "hostname": "sgdo2.ssl.ipmy.co",
+        "username": "tunvpn.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "157.230.34.91",
+        "hostname": "sgdo3.ssl.ipmy.co",
+        "username": "tunvpn.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "142.93.116.20",
+        "hostname": "us1.ssl.ipmy.co",
+        "username": "tunvpn.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "157.230.52.147",
+        "hostname": "us2.ssl.ipmy.co",
+        "username": "tunvpn.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "149.28.28.74",
+        "hostname": "jp1.ssl.ipmy.co",
+        "username": "tunvpn.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "103.56.207.51",
+        "hostname": "id.ssl.ipmy.co",
+        "username": "tunvpn.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "178.62.219.23",
+        "hostname": "nl.ssl.ipmy.co",
+        "username": "tunvpn.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "46.101.26.192",
+        "hostname": "uk.ssl.ipmy.co",
+        "username": "tunvpn.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "139.59.158.183",
+        "hostname": "de.ssl.ipmy.co",
+        "username": "tunvpn.com-{username}",
+        "password": "{password}"
+      }
+    ],
+    "www.jetssh.com": [
+      {
+        "host": "68.183.181.109",
+        "hostname": "sgjet2.ssl.jetssh.com",
+        "username": "jetssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "128.199.254.247",
+        "hostname": "sg1.ssl.jetssh.com",
+        "username": "jetssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "178.128.85.84",
+        "hostname": "sg2.ssl.jetssh.com",
+        "username": "jetssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "178.128.89.207",
+        "hostname": "sg3.ssl.jetssh.com",
+        "username": "jetssh.com-{username}",
+        "password": "{password}"
+      },
+      {
+        "host": "159.65.228.136",
+        "hostname": "us.ssl.jetssh.com",
+        "username": "jetssh.com-{username}",
+        "password": "{password}"
+      }
+    ],
+    "www.flyssh.com": [
+      {
+        "host": "142.93.203.113",
+        "hostname": "us1.ssl.flyssh.com",
+        "username": "{username}_flyssh.com",
+        "password": "{password}"
+      },
+      {
+        "host": "128.199.254.247",
+        "hostname": "sg1.ssl.flyssh.com",
+        "username": "{username}_flyssh.com",
+        "password": "{password}"
+      },
+      {
+        "host": "178.128.85.84",
+        "hostname": "sg2.ssl.flyssh.com",
+        "username": "{username}_flyssh.com",
+        "password": "{password}"
+      },
+      {
+        "host": "178.128.89.207",
+        "hostname": "sg3.ssl.flyssh.com",
+        "username": "{username}_flyssh.com",
+        "password": "{password}"
+      },
+      {
+        "host": "149.28.28.74",
+        "hostname": "jp.ssl.flyssh.com",
+        "username": "{username}_flyssh.com",
+        "password": "{password}"
+      }
+    ]
+  }
+}
