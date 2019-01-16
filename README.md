@@ -78,7 +78,7 @@ python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 ```
 
-### Config
+### Configurations
 
 Run `app.py` first to export `config.json` to `config/config.json`
 

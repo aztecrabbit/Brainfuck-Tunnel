@@ -18,7 +18,7 @@ class ssh_create(object):
         super(ssh_create, self).__init__()
 
         self.hostname_serverid = []
-        self.data_create_ssh = json.loads(open(real_path('/database/servers.json')).read())['servers']
+        self.data_create_ssh = json.loads(open(real_path('/../database/servers.json')).read())['servers']
         self.queue_accounts = Queue()
         self.queue_threads = 20
         self.accounts = []

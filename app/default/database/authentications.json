@@ -13,8 +13,8 @@
       "password": "rabbit"
     },
     {
-      "username": "brain",
-      "password": "brain"
+      "username": "brainfuck",
+      "password": "brainfuck"
     },
     {
       "username": "private",
@@ -27,10 +27,6 @@
     {
       "username": "public",
       "password": "public"
-    },
-    {
-      "username": "guest",
-      "password": "guest"
     }
   ]
 }
