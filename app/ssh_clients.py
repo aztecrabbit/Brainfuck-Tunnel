@@ -39,7 +39,7 @@ class ssh_clients(object):
 
     def connected_listener(self):
         while True:
-            time.sleep(1.000)
+            time.sleep(0.200)
             if len(self._connected) == len(self.socks5_port):
                 self.log('[Y1]Connected', status='[Y1] all')
                 self.disconnected_listener()
@@ -49,19 +49,6 @@ class ssh_clients(object):
             time.sleep(1.000)
             if len(self._connected) != len(self.socks5_port):
                 break
-
-    def start(self):
-        ssh_stabilizer(self.socks5_port)
-        while True:
-            try:
-                ssh_statistic('clear')
-                for socks5_port in self.socks5_port:
-                    threading.Thread(target=self.thread_ssh_client, args=(self.unique, socks5_port, )).start()
-                self.connected_listener()
-            except KeyboardInterrupt:
-                pass
-            finally:
-                self.unique += 1
 
     class ssh_request(threading.Thread):
         def __init__(self, socks5_port):
@@ -82,18 +69,30 @@ class ssh_clients(object):
                     break
                 except Exception as exception: pass
 
-    def thread_ssh_client(self, unique, socks5_port):
-        while self.unique == unique:
+    def start(self):
+        ssh_stabilizer(self.socks5_port)
+        while True:
             try:
-                time.sleep(1.000)
-                ssh_request = self.ssh_request(socks5_port)
-                ssh_request.start()
-                self.ssh_client(socks5_port)
+                while True:
+                    time.sleep(0.200)
+                    if len(self._connected) == 0: break
+                ssh_statistic('clear')
+                for socks5_port in self.socks5_port:
+                    time.sleep(0.200)
+                    threading.Thread(target=self.thread_ssh_client, args=(self.unique, socks5_port, )).start()
+                self.connected_listener()
             except KeyboardInterrupt:
                 pass
             finally:
-                ssh_request.stop()
-                self.disconnected(socks5_port)
+                self.unique += 1
+
+    def thread_ssh_client(self, unique, socks5_port):
+        while self.unique == unique:
+            ssh_request = self.ssh_request(socks5_port)
+            ssh_request.start()
+            self.ssh_client(socks5_port)
+            ssh_request.stop()
+            self.disconnected(socks5_port)
 
     def ssh_client(self, socks5_port):
         subprocess.Popen('rm -rf ~/.ssh/known_hosts', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
