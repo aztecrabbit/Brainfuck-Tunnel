@@ -1,4 +1,5 @@
 # Brainfuck Tunnel
+
 SSH Tunneling for Dynamic Port Forwarding (Free charge Internet Access)
 
 ### Packages
@@ -14,7 +15,13 @@ python3-pip
 openssh sshpass python3 corkscrew python3-pip
 ```
 
-### Using Cygwin? Here we go
+### Using Termux on Android?
+
+```
+pkg install pip python openssh sshpass corkscrew
+```
+
+### Using Cygwin on Windows?
 
 #### 1. apt-cyg
 
@@ -112,15 +119,15 @@ Add port to execute more SSH Clients.
 
 ### Usage
 
-| `Name`                               | `Command`
-|:------------------------------------ |:---------------------------------------------
-| `Inject`                             | `python3 inject.py`
-| `SSH Clients`                        | `python3 ssh.py`
-| `SNI Scanner`                        | `python3 sni-scanner.py (hostname) (hostname)`
-| `Check Serverid`                     | `python3 check-serverid.py`
-| `Create SSH Accounts`                | `python3 create-ssh.py`
-| `Export SSH Accounts`                | `python3 export-ssh.py`
-| `Inject and SSH Clients`             | `python3 app.py`
+| `Name`                               | `Script`
+|:------------------------------------ |:--------------------------------------------
+| `Inject`                             | `inject.py`
+| `SSH Clients`                        | `ssh.py`
+| `SNI Scanner`                        | `sni-scanner.py (hostname) (hostname) (etc)`
+| `Check Serverid`                     | `check-serverid.py`
+| `Create SSH Accounts`                | `create-ssh.py`
+| `Export SSH Accounts`                | `export-ssh.py`
+| `Inject and SSH Clients`             | `app.py`
 
 #### Note
 
