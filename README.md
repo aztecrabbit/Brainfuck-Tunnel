@@ -4,14 +4,14 @@ SSH Tunneling for Dynamic Port Forwarding (Free charge Internet Access)
 ### Packages
 
 ```
-nc
 openssh
 sshpass
 python3
+corkscrew
 python3-pip
 ```
 ```
-nc openssh sshpass python3 python3-pip
+openssh sshpass python3 corkscrew python3-pip
 ```
 
 ### Using Cygwin? Here we go
@@ -25,7 +25,7 @@ wget rawgit.com/transcode-open/apt-cyg/master/apt-cyg -P /bin/; chmod +x /bin/ap
 #### 2. required packages
 
 ```
-apt-cyg install nc tar curl make openssh python3 autoconf gcc-core python3-pip
+apt-cyg install tar curl make openssh python3 autoconf gcc-core corkscrew python3-pip
 ```
 
 #### 3. sshpass
