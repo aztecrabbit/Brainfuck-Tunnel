@@ -108,7 +108,8 @@ class ssh_clients(object):
 
         self.log('[G1]Connecting to {hostname} port {port}{end}'.format(hostname=hostname, port=port, end=' '*8), status='[G1]'+socks5_port)
         response = subprocess.Popen(
-            'sshpass -p "{password}" ssh -CND {socks5_port} {host} -p {port} -l "{username}" -o "ProxyCommand=nc -X CONNECT -x {inject_host}:{inject_port} %h %p"'.format(
+            #'sshpass -p "{password}" ssh -CND {socks5_port} {host} -p {port} -l "{username}" -o "ProxyCommand=nc -X CONNECT -x {inject_host}:{inject_port} %h %p"'.format(
+            'sshpass -p "{password}" ssh -CND {socks5_port} {host} -p {port} -l "{username}" -o "ProxyCommand=corkscrew {inject_host} {inject_port} %h %p"'.format(
                 host=host,
                 port=port,
                 username=username,
