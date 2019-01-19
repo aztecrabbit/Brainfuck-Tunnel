@@ -2,122 +2,94 @@
 
 SSH Tunneling for Dynamic Port Forwarding (Free charge Internet Access)
 
-### Packages
 
-```
-openssh
-sshpass
-python3
-corkscrew
-python3-pip
-```
-```
-openssh sshpass python3 corkscrew python3-pip
-```
+Requirements
+------------
 
-### Using Termux on Android?
+#### Packages
 
-```
-pkg install pip python openssh sshpass corkscrew
-```
+    nc (openbsd-version) (be aware if you are installing wrong nc)
+    openssh
+    sshpass
+    python3
+    corkscrew
+    python3-pip
 
-### Using Cygwin on Windows?
 
-#### 1. apt-cyg
+#### Using Termux on Android?
 
-```
-wget rawgit.com/transcode-open/apt-cyg/master/apt-cyg -P /bin/; chmod +x /bin/apt-cyg
-```
+    $ pkg install pip python openssh sshpass corkscrew
 
-#### 2. required packages
 
-```
-apt-cyg install tar curl make openssh python3 autoconf gcc-core corkscrew python3-pip
-```
+#### Using Cygwin on Windows?
 
-#### 3. sshpass
+**1. apt-cyg**
 
-```
-curl -LO http://downloads.sourceforge.net/sshpass/sshpass-1.06.tar.gz
-md5sum sshpass-1.06.tar.gz
-tar xvf sshpass-1.06.tar.gz
-cd sshpass-1.06
-./configure
-make
-make install
-```
-```
-curl -LO http://downloads.sourceforge.net/sshpass/sshpass-1.06.tar.gz; md5sum sshpass-1.06.tar.gz; tar xvf sshpass-1.06.tar.gz; cd sshpass-1.06; ./configure; make; make install
-```
+    $ wget rawgit.com/transcode-open/apt-cyg/master/apt-cyg -P /bin/; chmod +x /bin/apt-cyg
 
-### SSH Configurations
 
-Edit file `~/.ssh/config` like this:
+**2. required packages**
 
-```
-Host *
-    StrictHostKeyChecking no
-```
+    $ apt-cyg install nc tar curl make openssh python3 autoconf gcc-core corkscrew python3-pip
 
-If file or folder not found. Copy this command and paste to terminal:
 
-```
-mkdir ~/.ssh; echo '' > ~/.ssh/config
-cat << 'EOF' > ~/.ssh/config
-Host *
-    StrictHostKeyChecking no
-EOF
-cat ~/.ssh/config
+**3. sshpass**
 
-```
+    $ curl -LO http://downloads.sourceforge.net/sshpass/sshpass-1.06.tar.gz
+    $ md5sum sshpass-1.06.tar.gz
+    $ tar xvf sshpass-1.06.tar.gz
+    $ cd sshpass-1.06
+    $ ./configure
+    $ make
+    $ make install
 
-End command must be Enter. Make sure response from cat command like this:
 
-```
-Host *
-    StrictHostKeyChecking no
-```
+#### Python 3
 
-### IMPORTANT
+    $ python3 -m pip install --upgrade pip
+    $ python3 -m pip install -r requirements.txt
 
-```
-python3 -m pip install --upgrade pip
-python3 -m pip install -r requirements.txt
-```
 
-### Configurations
+Configurations
+--------------
 
 Run `app.py` first to export `config.json` to `config/config.json`
 
-#### 1. Tunel Type
+**1. Tunel Type**
 
-```
-0: Direct     -> SSH
-1: Direct     -> SSH (SSL/TLS)
-2: HTTP Proxy -> SSH
-```
+    0: Direct     -> SSH
+    1: Direct     -> SSH (SSL/TLS)
+    2: HTTP Proxy -> SSH
 
-#### 2. SOCKS5 Port
 
-```json
-  "socks5_port_external": [
-    "1081",
-    "1082",
-    "1083"
-  ]
+**2. SOCKS5 Port**
 
-  "socks5_port": [
-    "1081",
-    "1082",
-    "1083"
-  ]
-```
+    "socks5_port_external": [
+      "1081",
+      "1082",
+      "1083"
+    ]
 
-If socks5_port_external or socks5_port like that. You will execute 3 SSH Clients.
-SOCKSv5 Dynamic Port Forwarding set to 1081, 1082, and 1083.
-Add port to execute more SSH Clients.
+    "socks5_port": [
+      "1081",
+      "1082",
+      "1083"
+    ]
 
-### Usage
+If `socks5_port_external` or `socks5_port` like that. You will execute 3 SSH Clients.
+Add ports to execute more SSH Clients.
+
+
+**3. Proxy Command**
+
+Please googling for this topic.
+
+    proxy_host: {inject_host}
+    proxy_port: {inject_port}
+
+
+Usage
+-----
 
 | `Name`                               | `Script`
 |:------------------------------------ |:--------------------------------------------
@@ -129,17 +101,18 @@ Add port to execute more SSH Clients.
 | `Export SSH Accounts`                | `export-ssh.py`
 | `Inject and SSH Clients`             | `app.py`
 
-#### Note
 
-```
-Ctrl-C to Change Server
-Ctrl-Pause to Exit
-```
+Note
+----
 
-#### Contacts
+    Ctrl-C to Change Server
+    Ctrl-Pause to Exit
 
-Facebook Group : [Internet Freedom] <br />
-Facebook Account : [Aztec Rabbit]
+
+Contacts
+--------
+
+Facebook Group : [Internet Freedom]
+
 
 [Internet Freedom]: https://www.facebook.com/groups/171888786834544/
-[Aztec Rabbit]: https://www.facebook.com/aztec.rabbit

@@ -18,5 +18,8 @@
 	],
 
 	"proxy_host": "10.8.3.8",
-	"proxy_port": "8080"
+	"proxy_port": "8080",
+
+	"proxy_command": "nc -X CONNECT -x {inject_host}:{inject_port} %h %p",
+	"proxy_command": "corkscrew {inject_host} {inject_port} %h %p"
 }

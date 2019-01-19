@@ -19,6 +19,7 @@ class ssh_clients(object):
     def __init__(self, tunnel_type, inject_host, inject_port, socks5_port):
         super(ssh_clients, self).__init__()
 
+        self.proxy_command = ''
         self.tunnel_type = tunnel_type
         self.inject_host = inject_host
         self.inject_port = inject_port
@@ -70,16 +71,30 @@ class ssh_clients(object):
                 except Exception as exception: pass
 
     def start(self):
-        ssh_stabilizer(self.socks5_port)
+        try:
+            self.proxy_command = json.loads(open(real_path('/../config/config.json')).read())['proxy_command']
+            ssh_stabilizer(self.socks5_port)
+        except:
+            value  = '[R1]Exception:' + ' ' * 24 + '\n\n'
+            value += '   File {file} Error!\n'.format(file=real_path('/../config/config.json')).replace('/app/../', '/')
+            value += '   Please delete that file or fixing by your-self.\n'
+            value += '   Good-luck!\n'
+            self.log(value, status='[R1]INFO')
+            return
+
         while True:
             try:
                 while True:
                     time.sleep(0.200)
-                    if len(self._connected) == 0: break
+                    if len(self._connected) == 0:
+                        time.sleep(1.000)
+                        break
                 ssh_statistic('clear')
                 for socks5_port in self.socks5_port:
-                    time.sleep(0.200)
-                    threading.Thread(target=self.thread_ssh_client, args=(self.unique, socks5_port, )).start()
+                    time.sleep(0.025)
+                    thread = threading.Thread(target=self.thread_ssh_client, args=(self.unique, socks5_port, ))
+                    thread.daemon = True
+                    thread.start()
                 self.connected_listener()
             except KeyboardInterrupt:
                 pass
@@ -105,11 +120,14 @@ class ssh_clients(object):
         hostname = account['hostname']
         username = account['username']
         password = account['password']
+        proxy_command = self.proxy_command
 
         self.log('[G1]Connecting to {hostname} port {port}{end}'.format(hostname=hostname, port=port, end=' '*8), status='[G1]'+socks5_port)
         response = subprocess.Popen(
-            #'sshpass -p "{password}" ssh -CND {socks5_port} {host} -p {port} -l "{username}" -o "ProxyCommand=nc -X CONNECT -x {inject_host}:{inject_port} %h %p"'.format(
-            'sshpass -p "{password}" ssh -CND {socks5_port} {host} -p {port} -l "{username}" -o "ProxyCommand=corkscrew {inject_host} {inject_port} %h %p"'.format(
+            ('sshpass -p "{password}" ssh -CND {socks5_port} {host} -p {port} -l "{username}" ' + '-o StrictHostKeyChecking=no -o ProxyCommand="{proxy_command}"'.format(
+                    proxy_command=proxy_command
+                )
+            ).format(
                 host=host,
                 port=port,
                 username=username,
@@ -118,7 +136,9 @@ class ssh_clients(object):
                 inject_port=self.inject_port,
                 socks5_port=socks5_port
             ),
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT
         ).communicate()[0].decode('utf-8').replace('\r', '').replace('\n', ' ')
         
         if not response:
