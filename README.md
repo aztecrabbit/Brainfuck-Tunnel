@@ -44,7 +44,7 @@ Requirements
     $ make install
 
 
-#### Python 3
+#### Python 3 Modules
 
     $ python3 -m pip install --upgrade pip
     $ python3 -m pip install -r requirements.txt

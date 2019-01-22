@@ -54,8 +54,8 @@ class ssh_create(object):
         loop = 0
         while True:
             try:
-                if loop >= 1: self.log(results[:-7] + '[R1]' + results[-3:] + '!' if loop == 3 else results)
-                if loop == 3: break
+                if loop >= 1: self.log(results[:-7] + '[R2]END' if loop == 2 else results)
+                if loop == 2: break
                 results = '[Y1]{username_hostname:.<48} '.format(username_hostname=username+'[G1]@'+hostname+' ')
                 browser = requests.session()
                 browser.request('HEAD', HEAD, timeout=10)
@@ -79,11 +79,11 @@ class ssh_create(object):
                     results = results + '[R1]' + str(response.text)
             except requests.exceptions.Timeout:
                 results = results + '[R1]ERR'
-                loop = loop + 1
+                loop += 1
                 continue
             except requests.exceptions.ConnectionError:
                 results = results + '[R2]ERR'
-                loop = loop + 1
+                loop += 1
                 continue
             except Exception as exception:
                 results = results + '[R1]Exception: ' + str(exception)

@@ -13,10 +13,10 @@ class ssh_statistic(threading.Thread):
         self.start()
 
     def run(self):
-        with lock:
-            while True:
-                try:
-                    file = real_path('/data/statistic.txt')
+        file = real_path('/data/statistic.txt')
+        while True:
+            try:
+                with lock:
                     data = open(file, 'r').read()
                     download, upload = data.split(' ') if len(data.split(' ')) == 2 else (0, 0)
 
@@ -33,5 +33,10 @@ class ssh_statistic(threading.Thread):
                     log_replace('[Y1]Down: {download} Up: {upload}'.format(download=download, upload=upload))
                     open(file, 'w').write(str(download) + ' ' + str(upload))
                     break
-                except FileNotFoundError:
-                    open(file, 'w')
+            except FileNotFoundError:
+                open(file, 'w')
+            except RuntimeError:
+                break
+            except Exception as exception:
+                log('[R1]Exception: {exception}'.format(exception=exception), status='[R1]INFO')
+                break

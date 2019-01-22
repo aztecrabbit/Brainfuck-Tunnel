@@ -93,10 +93,10 @@ class server_tunnel(threading.Thread):
         self.log('Connection established')
         while True:
             timeout += 1
-            ins, _, exs = select.select(sockets, [], sockets, 3)
-            if exs: break
-            if ins:
-                for socket in ins:
+            socket_io, _, errors = select.select(sockets, [], sockets, 3)
+            if errors: break
+            if socket_io:
+                for socket in socket_io:
                     try:
                         data = socket.recv(self.buffer_size)
                         if not data:
