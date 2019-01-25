@@ -92,7 +92,7 @@ class ssh_clients(object):
                 ssh_statistic('clear')
                 for socks5_port in self.socks5_port:
                     time.sleep(0.025)
-                    thread = threading.Thread(target=self.thread_ssh_client, args=(self.unique, socks5_port, ))
+                    thread = threading.Thread(target=self.ssh_client_thread, args=(self.unique, socks5_port, ))
                     thread.daemon = True
                     thread.start()
                 self.connected_listener()
@@ -101,7 +101,7 @@ class ssh_clients(object):
             finally:
                 self.unique += 1
 
-    def thread_ssh_client(self, unique, socks5_port):
+    def ssh_client_thread(self, unique, socks5_port):
         while self.unique == unique:
             ssh_request = self.ssh_request(socks5_port)
             ssh_request.start()

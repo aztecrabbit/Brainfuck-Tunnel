@@ -58,11 +58,12 @@ class ssh_create(object):
 
         while True:
             try:
-                self.log_replace('[Y1]{}'.format(self.total()), log_datetime=False)
-                i += 1
+                time.sleep(0.200)
+                loop, i = 0, i + 1
                 results = '{username_hostname:.<48} '.format(username_hostname='[Y1]'+username+'[G1]@'+hostname+' ')
                 browser = requests.session()
-                browser.request('HEAD', HEAD, timeout=10)
+                response = browser.request('HEAD', HEAD, timeout=10)
+                time.sleep(0.200)
                 response = browser.request('POST', POST,
                     data={'serverid': serverid, 'username': username, 'password': password},
                     headers={'Referer': POST},
@@ -71,7 +72,7 @@ class ssh_create(object):
                 )
                 if not response.text:
                     results = results + '[R1]   '
-                    if i < x: continue
+                    if i < x: loop = 1
                 elif 'Username already exist' in response.text:
                     results = results + '[Y1]200'
                 elif 'has been successfully created' in response.text:
@@ -82,14 +83,19 @@ class ssh_create(object):
                     results = results + '[R1]' + str(response.text)
             except requests.exceptions.Timeout:
                 results = results + '[R1]ERR'
-                if i < x: continue
+                if i < x: loop = 1
             except requests.exceptions.ConnectionError:
                 results = results + '[R2]ERR'
-                if i < x: continue
+                if i < x: loop = 1
             except Exception as exception:
                 results = results + '[R1]Exception: ' + str(exception)
             finally:
                 self.log(results[:-7] + '[R2]END' if i == x else results)
+            if loop:
+                self.log_replace('[Y1]{}'.format(self.total()), log_datetime=False)
+                continue
+            self.created()
+            self.log_replace('[Y1]{}'.format(self.total()), log_datetime=False)
             break
 
     def update_serverid_thread(self, data):
@@ -97,6 +103,7 @@ class ssh_create(object):
             try:
                 response = requests.request('GET', 'http://{name}{page}'.format(name=data['name'], page=data['page']), timeout=10)
                 response = BeautifulSoup(response.text, 'html.parser')
+                self.log('[G1]{name:.<44} [G1]200'.format(name=data['name']+' [G1]'))
                 for element in response.find_all(attrs={'class': data['pattern-class']}):
                     hostname = re.findall(r'{}'.format(data['pattern-hostname'].format(hostname=r'([a-zA-Z0-9]+(\.[a-zA-Z0-9]+)+)')), str(element))
                     serverid = re.findall(r'{}'.format(data['pattern-serverid'].format(serverid=r'([0-9]+)')), str(element))
@@ -110,17 +117,19 @@ class ssh_create(object):
                                 hostname_available = True
                                 break
                         if hostname_available or self.verbose:
-                            self.log('[R1]{hostname:.<44} [R1]{serverid}{verbose}'.format(
-                                hostname=(hostname if hostname else '(empty hostname)') + ' [G1]',
-                                serverid=(serverid if serverid else '(empty serverid)') + ' ',
-                                verbose='[R1](verbose)' if self.verbose else '')
+                            self.log('[R1]{hostname:.<44} [R1]{serverid} {verbose}'.format(
+                                    hostname=(hostname if hostname else '(empty hostname)') + ' [G1]',
+                                    serverid=(serverid if serverid else '(empty serverid)'),
+                                    verbose=('(verbose)' if self.verbose else '')
+                                )
                             )
                         continue
                     
                     if self.verbose:
-                        self.log('[G1]{hostname:.<44} [G1]{serverid}'.format(
-                            hostname=(hostname if hostname else '(empty hostname)') + ' [G1]',
-                            serverid=(serverid if serverid else '(empty serverid)') + ' ')
+                        self.log('[G1]{hostname:.<40} [Y1]{serverid}'.format(
+                                hostname=hostname + ' ',
+                                serverid=serverid
+                            )
                         )
 
                     self.hostname_serverid.append({
@@ -128,10 +137,10 @@ class ssh_create(object):
                         'serverid': serverid
                     })
             except requests.exceptions.Timeout:
-                self.log('[R1]Connection timeout')
+                self.log('[R1]{name:.<44} [R1]ERR'.format(name=data['name']+' [G1]'))
                 continue
             except requests.exceptions.ConnectionError:
-                self.log('[R1]Connection closed')
+                self.log('[R1]{name:.<44} [R2]END'.format(name=data['name']+' [G1]'))
             except Exception as exception:
                 self.log_exception(exception)
             break
@@ -150,6 +159,7 @@ class ssh_create(object):
             if name_available: threads.append(threading.Thread(target=self.update_serverid_thread, args=(data, )))
 
         for thread in threads:
+            time.sleep(0.200)
             thread.daemon = True
             thread.start()
 
@@ -168,14 +178,13 @@ class ssh_create(object):
 
     def create_thread(self):
         while True:
+            time.sleep(0.200)
             account = self.queue_accounts.get()
             for data in self.data_create_ssh:
                 if data['name'] == account['name']:
                     self.create(data, account)
                     break
-            self.created()
-            self.log_replace('[Y1]{}'.format(self.total()), log_datetime=False)
-            if self.queue_accounts.task_done() is None and not self.queue_accounts.qsize():
+            if self.queue_accounts.task_done() is None and self.queue_accounts.qsize() == 0:
                 break
 
     def start(self):
@@ -195,6 +204,7 @@ class ssh_create(object):
 
             value = '[G1]Creating {} ssh accounts'.format(self._total)
             self.log(value + ' ' * 8)
+            self.log_replace('[Y1]{}'.format(self.total()), log_datetime=False)
 
             for i in range(self.queue_threads):
                 thread = threading.Thread(target=self.create_thread)

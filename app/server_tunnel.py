@@ -23,7 +23,7 @@ class server_tunnel(threading.Thread):
 
         self.do_handshake_on_connect = True
         self.buffer_size = 65535
-        self.timeout = 5
+        self.timeout = 3
         self.daemon = True
 
     def log(self, value, status='[G1]INFO'):
