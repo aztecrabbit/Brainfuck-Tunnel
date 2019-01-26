@@ -47,7 +47,8 @@ Requirements
 #### Python 3 Modules
 
     $ python3 -m pip install --upgrade pip
-    $ python3 -m pip install -r requirements.txt
+    $ python3 -m pip install requests beautifulsoup4
+    $ python3 -m pip install -U requests[socks]
 
 
 Configurations

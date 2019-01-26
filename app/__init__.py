@@ -6,6 +6,7 @@ from .server         import *
 from .server_tunnel  import *
 from .ssh_clients    import *
 from .ssh_create     import *
+from .ssh_statistic  import *
 
 
 def main():

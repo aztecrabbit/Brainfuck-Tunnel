@@ -118,7 +118,7 @@ class server_tunnel(threading.Thread):
             response = self.socket_tunnel.recv(self.buffer_size).decode('charmap')
             if not response: break
             response_status = response.replace('\r', '').split('\n')[0]
-            if re.match(r'HTTP/1\.(0|1) 200 (OK|Connection established)', response_status):
+            if re.match(r'HTTP/[0-9](\.[0-9])? 200 (OK|Connection established)', response_status):
                 self.log('Response: {response}'.format(response=response_status))
                 self.handler()
             else:

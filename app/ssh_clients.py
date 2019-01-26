@@ -19,7 +19,6 @@ class ssh_clients(object):
     def __init__(self, tunnel_type, inject_host, inject_port, socks5_port):
         super(ssh_clients, self).__init__()
 
-        self.proxy_command = ''
         self.tunnel_type = tunnel_type
         self.inject_host = inject_host
         self.inject_port = inject_port
@@ -27,6 +26,11 @@ class ssh_clients(object):
         self.accounts = []
         self.unique = 0
         self.daemon = True
+
+        try:
+            self.proxy_command = json.loads(open(real_path('/../config/config.json')).read())['proxy_command']
+        except:
+            self.proxy_command = ""
 
     def log(self, value, status=''):
         log(value, status=status)
@@ -71,17 +75,14 @@ class ssh_clients(object):
                 except Exception as exception: pass
 
     def start(self):
-        try:
-            self.proxy_command = json.loads(open(real_path('/../config/config.json')).read())['proxy_command']
-            ssh_stabilizer(self.socks5_port)
-        except:
+        if not self.proxy_command:
             value  = '[R1]Exception:' + ' ' * 24 + '\n\n'
             value += '   File {file} Error!\n'.format(file=real_path('/../config/config.json')).replace('/app/../', '/')
             value += '   Please delete that file or fixing by your-self.\n'
             value += '   Good-luck!\n'
             self.log(value, status='[R1]INFO')
             return
-
+        ssh_stabilizer(self.socks5_port)
         while True:
             try:
                 while True:

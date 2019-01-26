@@ -1,20 +1,21 @@
 {
-	"tunnel_type_external": "1",
+	"tunnel_type_external": "0",
 	"inject_host_external": "127.0.0.1",
 	"inject_port_external": "3128",
 	"socks5_port_external": [
-		"1081",
-		"1082",
-		"1083"
+		"1080"
 	],
 
-	"tunnel_type": "1",
+	"tunnel_type": "0",
 	"inject_host": "127.0.0.1",
 	"inject_port": "8080",
 	"socks5_port": [
+		"1080",
 		"1081",
 		"1082",
-		"1083"
+		"1083",
+		"1084",
+		"1085"
 	],
 
 	"proxy_host": "10.8.3.8",
