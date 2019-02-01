@@ -17,7 +17,7 @@ class ssh_stabilizer(threading.Thread):
 
     def task(self, socks5_port):
         while not self._stop:
-            time.sleep(30.000)
+            time.sleep(15.000)
             try:
                 requests.request('HEAD', 'http://141.0.11.241', proxies={'http': 'socks5h://127.0.0.1:{}'.format(socks5_port), 'https': 'socks5h://127.0.0.1:{}'.format(socks5_port)}, timeout=3, allow_redirects=False)
             except Exception as exception: pass

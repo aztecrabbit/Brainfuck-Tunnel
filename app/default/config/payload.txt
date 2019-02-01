@@ -1,1 +1,6 @@
-[method] [host_port] [protocol][crlf][crlf]
+CONNECT :80 HTTP/1.1[crlf]Host: axisnet.id[crlf]Host: [host_port][crlf][crlf]
+
+
+# Proxy Default - 10.8.3.8:8080
+# 20MB+ > DNS diblock
+

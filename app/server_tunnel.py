@@ -18,7 +18,6 @@ class server_tunnel(threading.Thread):
         self.silent = silent
 
         self.server_name_indication = open(real_path('/../config/server-name-indication.txt')).read().strip()
-        self.payload = open(real_path('/../config/payload.txt')).read().strip()
         self.config = json.loads(open(real_path('/../config/config.json')).read())
 
         self.do_handshake_on_connect = True
@@ -44,6 +43,16 @@ class server_tunnel(threading.Thread):
             return False
         self.host, self.port = result[1], int(result[3])
         return True
+
+    def payload(self):
+        payload = ''
+
+        for value in open(real_path('/../config/payload.txt')).read().split('---')[0].splitlines():
+            value = value.strip()
+            if value and not value.startswith('#'):
+                payload = payload + value
+
+        return payload
 
     def payload_decode(self, payload):
         payload = payload.replace('[real_raw]', '[raw][crlf][crlf]')
@@ -130,7 +139,7 @@ class server_tunnel(threading.Thread):
     def tunnel_type_0(self):
         try:
             self.socket_tunnel.connect((self.host, int(self.port)))
-            self.send_payload(self.payload)
+            self.send_payload(self.payload())
             self.handler()
         except socket.timeout:
             pass
@@ -151,9 +160,9 @@ class server_tunnel(threading.Thread):
             self.certificate()
             self.handler()
         except socket.timeout:
-            self.log('[R1]Connection timeout', status='[R1]INFO')
+            pass
         except socket.error:
-            self.log('[R1]Connection closed', status='[R1]INFO')
+            pass
         except Exception as exception:
             self.log_exception(exception)
         finally:
@@ -164,7 +173,7 @@ class server_tunnel(threading.Thread):
     def tunnel_type_2(self):
         try:
             self.socket_tunnel.connect((self.config['proxy_host'], int(self.config['proxy_port'])))
-            self.send_payload(self.payload)
+            self.send_payload(self.payload())
             self.proxy_handler()
         except socket.timeout:
             pass
