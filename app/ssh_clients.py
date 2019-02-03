@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import time
 import socket
@@ -9,20 +10,21 @@ import subprocess
 from .app            import *
 from .ssh_create     import *
 from .ssh_statistic  import *
-from .ssh_stabilizer import *
+from .http_requests  import *
 
 
 class ssh_clients(object):
     
     _connected = set()
 
-    def __init__(self, tunnel_type, inject_host, inject_port, socks5_port):
+    def __init__(self, tunnel_type, inject_host, inject_port, socks5_ports):
         super(ssh_clients, self).__init__()
 
+        self.http_requests = http_requests(socks5_ports)
+        self.socks5_ports = socks5_ports
         self.tunnel_type = tunnel_type
         self.inject_host = inject_host
         self.inject_port = inject_port
-        self.socks5_port = socks5_port
         self.accounts = []
         self.unique = 0
         self.daemon = True
@@ -32,47 +34,26 @@ class ssh_clients(object):
         except:
             self.proxy_command = ""
 
-    def log(self, value, status=''):
-        log(value, status=status)
+    def log(self, value, status='', status_color='[G1]'):
+        log(value, status=status, status_color=status_color)
 
     def connected(self, socks5_port):
         self._connected.add(socks5_port)
+        if len(self._connected) == len(self.socks5_ports):
+            self.log('[Y1]Connected', status='all', status_color='[Y1]')
+            self.http_requests = http_requests(self.socks5_ports)
+            self.http_requests.start()
 
     def disconnected(self, socks5_port):
+        with lock: self.http_requests.stop()
         if socks5_port in self._connected:
             self._connected.remove(socks5_port)
 
-    def connected_listener(self):
+    def all_disconnected_listener(self):
         while True:
-            time.sleep(0.200)
-            if len(self._connected) == len(self.socks5_port):
-                self.log('[Y1]Connected', status='[Y1] all')
-                self.disconnected_listener()
-
-    def disconnected_listener(self):
-        while True:
-            time.sleep(1.000)
-            if len(self._connected) != len(self.socks5_port):
+            if len(self._connected) == 0:
+                self.log('[R1]Disconnected', status='all', status_color='[R1]')
                 break
-
-    class ssh_request(threading.Thread):
-        def __init__(self, socks5_port):
-            super(ssh_clients.ssh_request, self).__init__()
-
-            self.socks5_port = socks5_port
-            self.daemon = True
-            self._stop = False
-
-        def stop(self):
-            self._stop = True
-
-        def run(self):
-            while not self._stop:
-                try:
-                    requests.request('HEAD', 'http://141.0.11.241', proxies={'http': 'socks5h://127.0.0.1:{}'.format(self.socks5_port), 'https': 'socks5h://127.0.0.1:{}'.format(self.socks5_port)}, timeout=3, allow_redirects=False)
-                    if not self._stop: ssh_clients.connected(ssh_clients, self.socks5_port)
-                    break
-                except Exception as exception: pass
 
     def start(self):
         if not self.proxy_command:
@@ -82,79 +63,68 @@ class ssh_clients(object):
             value += '   Good-luck!\n'
             self.log(value, status='[R1]INFO')
             return
-        ssh_stabilizer(self.socks5_port)
+
         while True:
             try:
-                while True:
-                    time.sleep(0.200)
-                    if len(self._connected) == 0:
-                        time.sleep(1.000)
-                        break
                 ssh_statistic('clear')
-                for socks5_port in self.socks5_port:
+                for socks5_port in self.socks5_ports:
                     time.sleep(0.025)
-                    thread = threading.Thread(target=self.ssh_client_thread, args=(self.unique, socks5_port, ))
+                    thread = threading.Thread(target=self.ssh_client, args=(self.unique, socks5_port, ))
                     thread.daemon = True
                     thread.start()
-                self.connected_listener()
+                time.sleep(60*60*24*30*12)
             except KeyboardInterrupt:
                 pass
             finally:
                 self.unique += 1
+                self.all_disconnected_listener()
 
-    def ssh_client_thread(self, unique, socks5_port):
+    def ssh_client(self, unique, socks5_port):
         while self.unique == unique:
-            ssh_request = self.ssh_request(socks5_port)
-            ssh_request.start()
-            self.ssh_client(socks5_port)
-            ssh_request.stop()
+            subprocess.Popen('rm -rf ~/.ssh/known_hosts', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+
+            random.shuffle(self.accounts)
+
+            account = self.accounts[random.randint(0, len(self.accounts) - 1)]
+            host = account['host']
+            port = '80' if not self.tunnel_type or self.tunnel_type == '0' or self.tunnel_type == '2' else '443'
+            hostname = account['hostname']
+            username = account['username']
+            password = account['password']
+            proxy_command = self.proxy_command
+
+            self.log('[G1]Connecting to {hostname} port {port}{end}'.format(hostname=hostname, port=port, end=' '*8), status='[G1]'+socks5_port)
+            response = subprocess.Popen(
+                ('sshpass -p "{password}" ssh -v -CND {socks5_port} {host} -p {port} -l "{username}" ' + '-o StrictHostKeyChecking=no -o ProxyCommand="{proxy_command}"'.format(
+                        proxy_command=proxy_command
+                    )
+                ).format(
+                    host=host,
+                    port=port,
+                    username=username,
+                    password=password,
+                    inject_host=self.inject_host,
+                    inject_port=self.inject_port,
+                    socks5_port=socks5_port
+                ),
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT
+            )
+
+            for line in response.stdout:
+                line = line.decode().lstrip('debug1: ').rstrip()
+
+                if 'Authentication succeeded' in line:
+                    self.connected(socks5_port)
+
+                elif 'Permission denied' in line:
+                    self.log('[R1]Access Denied', status=socks5_port, status_color='[R1]')
+
+                elif 'Connection closed' in line:
+                    self.log('[R1]Connection closed', status=socks5_port, status_color='[R1]')
+
+                elif 'Address already in use' in line:
+                    self.log('[R1]Port used by another programs', status=socks5_port, status_color='[R1]')
+
             self.disconnected(socks5_port)
-
-    def ssh_client(self, socks5_port):
-        subprocess.Popen('rm -rf ~/.ssh/known_hosts', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
-
-        random.shuffle(self.accounts)
-
-        account = self.accounts[random.randint(0, len(self.accounts) - 1)]
-        host = account['host']
-        port = '80' if not self.tunnel_type or self.tunnel_type == '0' or self.tunnel_type == '2' else '443'
-        hostname = account['hostname']
-        username = account['username']
-        password = account['password']
-        proxy_command = self.proxy_command
-
-        self.log('[G1]Connecting to {hostname} port {port}{end}'.format(hostname=hostname, port=port, end=' '*8), status='[G1]'+socks5_port)
-        response = subprocess.Popen(
-            ('sshpass -p "{password}" ssh -CND {socks5_port} {host} -p {port} -l "{username}" ' + '-o StrictHostKeyChecking=no -o ProxyCommand="{proxy_command}"'.format(
-                    proxy_command=proxy_command
-                )
-            ).format(
-                host=host,
-                port=port,
-                username=username,
-                password=password,
-                inject_host=self.inject_host,
-                inject_port=self.inject_port,
-                socks5_port=socks5_port
-            ),
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT
-        ).communicate()[0].decode('utf-8').replace('\r', '').replace('\n', ' ')
-        
-        if not response:
-            response = 'Disconnected'
-        elif 'Permission denied' in response:
-            response = 'Access Denied'
-        elif 'Connection closed' in response:
-            response = 'Connection closed'
-        elif 'nc: proxy read: Broken pipe' in response:
-            response = 'Address not found'
-        elif 'no remote_id' in response:
-            response = 'Fucking banners'
-        elif 'packet_write_wait: Connection to UNKNOWN port' in response:
-            response = 'Connection timeout'
-        elif 'to the list of known hosts.' in response or 'End of stack trace' in response or 'Connection reset' in response or 'open failed' in response:
-            response = 'Disconnected'
-
-        self.log('[R1]{response}'.format(response=response), status='[R1]'+socks5_port)
