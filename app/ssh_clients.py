@@ -48,6 +48,8 @@ class ssh_clients(object):
         with lock: self.http_requests.stop()
         if socks5_port in self._connected:
             self._connected.remove(socks5_port)
+        if len(self._connected) == 0:
+            ssh_statistic('clear')
 
     def all_disconnected_listener(self):
         while True:

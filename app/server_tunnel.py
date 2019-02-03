@@ -118,7 +118,7 @@ class server_tunnel(threading.Thread):
                             ssh_statistic('upload')
                         timeout = 0
                     except: break
-            if timeout == 120: break
+            if timeout == 60: break
 
     def proxy_handler(self):
         loop = 0
