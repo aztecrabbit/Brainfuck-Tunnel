@@ -50,5 +50,8 @@ class http_requests(threading.Thread):
                     allow_redirects=False
                 )
                 self.log('Response: {}'.format(response.status_code), status=socks5_port)
-                time.sleep(15.000)
-            except Exception as exception: pass
+            except requests.exceptions.Timeout:
+                self.log('[R1]Response: ERR', status=socks5_port, status_color='[R1]')
+            except Exception as exception:
+                pass
+            finally: time.sleep(15.000)
