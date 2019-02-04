@@ -5,14 +5,14 @@ from .server_tunnel import *
 
 
 class server(threading.Thread):
-    def __init__(self, inject_host_port, tunnel_type, silent=False):
+    def __init__(self, inject_host_port, tunnel_type, quiet=False):
         super(server, self).__init__()
 
         self.inject_host, self.inject_port = self.inject_host_port = inject_host_port
         self.tunnel_type = tunnel_type
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.silent = silent
         self.daemon = True
+        self.quiet = quiet
 
     def log(self, value, status='[G1]INFO'):
         log(value, status=status)
@@ -32,7 +32,7 @@ class server(threading.Thread):
 
             while True:
                 try:
-                    server_tunnel(self.server.accept(), self.tunnel_type, silent=self.silent).start()
+                    server_tunnel(self.server.accept(), self.tunnel_type, self.quiet).start()
                 except KeyboardInterrupt: pass
         except OSError as oserror:
             if not oserror:

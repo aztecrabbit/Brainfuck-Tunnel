@@ -71,8 +71,7 @@ class ssh_create(object):
                     timeout=15
                 )
                 if not response.text:
-                    results = results + '[R1]   '
-                    if i < x: loop = 1
+                    results = results + '[C1]200'
                 elif 'Username already exist' in response.text:
                     results = results + '[Y1]200'
                 elif 'has been successfully created' in response.text:

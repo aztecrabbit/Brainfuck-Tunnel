@@ -92,15 +92,7 @@ Please googling for this topic.
 Usage
 -----
 
-| `Name`                               | `Script`
-|:------------------------------------ |:--------------------------------------------
-| `Inject`                             | `inject.py`
-| `SSH Clients`                        | `ssh.py`
-| `SNI Scanner`                        | `sni-scanner.py (hostname) (hostname) (etc)`
-| `Check Serverid`                     | `check-serverid.py`
-| `Create SSH Accounts`                | `create-ssh.py`
-| `Export SSH Accounts`                | `export-ssh.py`
-| `Inject and SSH Clients`             | `app.py`
+    $ python3 (file-name)
 
 
 Note

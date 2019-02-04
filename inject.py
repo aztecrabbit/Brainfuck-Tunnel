@@ -12,7 +12,7 @@ def main():
     inject_host = str(config['inject_host_external'])
     inject_port = int(config['inject_port_external'])
 
-    app.server((inject_host, inject_port), tunnel_type,  silent=False).run()
+    app.server((inject_host, inject_port), tunnel_type).run()
 
 if __name__ == '__main__':
     main()

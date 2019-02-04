@@ -17,10 +17,11 @@ class ssh_clients(object):
     
     _connected = set()
 
-    def __init__(self, tunnel_type, inject_host, inject_port, socks5_ports):
+    def __init__(self, tunnel_type, inject_host, inject_port, socks5_ports, http_requests_enable=True):
         super(ssh_clients, self).__init__()
 
-        self.http_requests = http_requests(socks5_ports)
+        self.http_requests_enable = http_requests_enable
+        self.http_requests = http_requests(socks5_ports, self.http_requests_enable)
         self.socks5_ports = socks5_ports
         self.tunnel_type = tunnel_type
         self.inject_host = inject_host
@@ -41,7 +42,7 @@ class ssh_clients(object):
         self._connected.add(socks5_port)
         if len(self._connected) == len(self.socks5_ports):
             self.log('[Y1]Connected', status='all', status_color='[Y1]')
-            self.http_requests = http_requests(self.socks5_ports)
+            self.http_requests = http_requests(self.socks5_ports, self.http_requests_enable)
             self.http_requests.start()
 
     def disconnected(self, socks5_port):
@@ -51,9 +52,12 @@ class ssh_clients(object):
         if len(self._connected) == 0:
             ssh_statistic('clear')
 
+    def all_disconnected(self):
+        return True if len(self._connected) == 0 else False
+
     def all_disconnected_listener(self):
         while True:
-            if len(self._connected) == 0:
+            if self.all_disconnected():
                 self.log('[R1]Disconnected', status='all', status_color='[R1]')
                 break
 

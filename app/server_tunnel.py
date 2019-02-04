@@ -10,14 +10,14 @@ from .ssh_statistic import *
 
 
 class server_tunnel(threading.Thread):
-    def __init__(self, socket_accept, tunnel_type, silent=False):
+    def __init__(self, socket_accept, tunnel_type, quiet):
         super(server_tunnel, self).__init__()
 
         self.socket_client, (self.client_host, self.client_port) = socket_accept
         self.tunnel_type = tunnel_type
-        self.silent = silent
+        self.quiet = quiet
 
-        self.server_name_indication = open(real_path('/../config/server-name-indication.txt')).read().strip()
+        self.server_name_indication = open(real_path('/../config/server-name-indication.txt')).readlines()[0].strip()
         self.config = json.loads(open(real_path('/../config/config.json')).read())
 
         self.do_handshake_on_connect = True
@@ -26,10 +26,10 @@ class server_tunnel(threading.Thread):
         self.daemon = True
 
     def log(self, value, status='[G1]INFO'):
-        if not self.silent: log(value, status=status)
+        if not self.quiet: log(value, status=status)
 
     def log_replace(self, value):
-        if not self.silent: log_replace(value)
+        if not self.quiet: log_replace(value)
 
     def log_exception(self, value):
         log_exception(value, status='[R1]INFO')
