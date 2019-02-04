@@ -74,16 +74,12 @@ class server_tunnel(threading.Thread):
 
     def send_payload(self, payload_encode = ''):
         payload_encode = payload_encode if payload_encode else '[method] [host_port] [protocol][crlf][crlf]'
-        self.log('Payload:\n\n{payload}\n'.format(
-            payload=self.payload_decode(payload_encode).decode('charmap')
-            .replace('\r', '').strip('\n\n')
-            .replace('\n' * 6 + '[split]', '\n\n----- SPLIT -----\n\n')
-            .replace('\n' * 5 + '[split]', '\n\n----- SPLIT -----\n\n')
-            .replace('\n' * 4 + '[split]', '\n\n----- SPLIT -----\n\n')
-            .replace('\n' * 3 + '[split]', '\n\n----- SPLIT -----\n\n')
-            .replace('\n' * 2 + '[split]', '\n\n----- SPLIT -----\n\n')
-            .replace('\n' * 1 + '[split]', '\n\n----- SPLIT -----\n\n')
-            .replace('\n' * 0 + '[split]', '\n\n----- SPLIT -----\n\n')
+        self.log('Payload: \n\n{payload}\n'.format(
+            payload=('|   ' + self.payload_decode(payload_encode).decode('charmap'))
+                .replace('\r', '')
+                .replace('[split]', '$lf\n')
+                .replace('\n', '\n|   ')
+                .replace('$lf', '\n')
         ))
         payload_splits = payload_encode.split('[split]')
         for i in range(len(payload_splits)):
@@ -120,20 +116,32 @@ class server_tunnel(threading.Thread):
                     except: break
             if timeout == 60: break
 
+    def convert_response(self, response):
+        if response.startswith('HTTP'):
+            response = '\n\n|   {}\n'.format(response.replace('\r', '').split('\n\n')[0].replace('\n', '\n|   '))
+
+        else:
+            response = '[W2]\n\n{}\n'.format(re.sub(
+                r'\s+', ' ', response.replace('\r', '[CC][Y1]\\r[W2]').replace('\n', '[CC][Y1]\\n[W2]')
+            ))
+
+        return response
+
     def proxy_handler(self):
-        loop = 0
+        x = 0
         while True:
-            if loop == 1: self.log('Replacing response')
+            if x == 1: self.log('Replacing response')
             response = self.socket_tunnel.recv(self.buffer_size).decode('charmap')
             if not response: break
             response_status = response.replace('\r', '').split('\n')[0]
             if re.match(r'HTTP/[0-9](\.[0-9])? 200 (OK|Connection established)', response_status):
-                self.log('Response: {response}'.format(response=response_status))
+                self.log('Response: {}'.format(self.convert_response(response)))
                 self.handler()
+                break
             else:
-                self.log('Response:\n\n{response}\n'.format(response=response.replace('\r', '').split('\n\n')[0]))
+                self.log('Response: {}'.format(self.convert_response(response)))
                 self.socket_tunnel.sendall(b'HTTP/1.0 Connection established\r\n\r\n')
-                loop = loop + 1
+                x += 1
 
     # Direct -> SSH
     def tunnel_type_0(self):

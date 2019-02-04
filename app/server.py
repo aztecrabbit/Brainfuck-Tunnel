@@ -22,6 +22,14 @@ class server(threading.Thread):
             self.server.bind(self.inject_host_port)
             self.server.listen(True)
             self.log('[G1]Inject running on {inject_host} port {inject_port}'.format(inject_host=self.inject_host, inject_port=self.inject_port))
+
+            if self.tunnel_type == '0':
+                self.log('Tunnel Type: Direct -> SSH')
+            elif self.tunnel_type == '1':
+                self.log('Tunnel Type: Direct -> SSH (SSL/TLS)')
+            elif self.tunnel_type == '2':
+                self.log('Tunnel Type: HTTP Proxy -> SSH')
+
             while True:
                 try:
                     server_tunnel(self.server.accept(), self.tunnel_type, silent=self.silent).start()
