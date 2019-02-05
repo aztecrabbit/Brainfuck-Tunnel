@@ -11,7 +11,7 @@ def main():
     app.log('Checking serverid', status=None)
     data_create_ssh_temp = [
         {
-            "name": "",
+            "link": "",
             "head": "",
             "post": "",
             "page": "",

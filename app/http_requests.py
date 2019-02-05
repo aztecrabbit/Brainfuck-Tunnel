@@ -50,7 +50,7 @@ class http_requests(threading.Thread):
                         'http': 'socks5h://127.0.0.1:{}'.format(socks5_port),
                         'https': 'socks5h://127.0.0.1:{}'.format(socks5_port)
                     },
-                    timeout=5,
+                    timeout=10,
                     allow_redirects=False
                 )
                 self.log('Response: {}'.format(response.status_code), status=socks5_port)
@@ -60,4 +60,4 @@ class http_requests(threading.Thread):
                 self.log('[R2]Response: ERR', status=socks5_port, status_color='[R2]')
             except Exception as exception:
                 pass
-            finally: time.sleep(15.000)
+            finally: time.sleep(30.000)

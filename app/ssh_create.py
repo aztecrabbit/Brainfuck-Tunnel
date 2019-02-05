@@ -51,8 +51,8 @@ class ssh_create(object):
         hostname = account['hostname']
         username = account['username'].replace(data['replace-username'], '')
         password = account['password'].replace(data['replace-password'], '')
-        HEAD = 'http://{name}{head}'.format(name=data['name'], head=data['head'].format(serverid=serverid))
-        POST = 'http://{name}{post}'.format(name=data['name'], post=data['post'])
+        HEAD = '{link}{head}'.format(link=data['link'], head=data['head'].format(serverid=serverid))
+        POST = '{link}{post}'.format(link=data['link'], post=data['post'])
         i = 0
         x = 2
 
@@ -71,7 +71,7 @@ class ssh_create(object):
                     timeout=15
                 )
                 if not response.text:
-                    results = results + '[C1]200'
+                    results = results + '[Y2]200'
                 elif 'Username already exist' in response.text:
                     results = results + '[Y1]200'
                 elif 'has been successfully created' in response.text:
@@ -98,9 +98,10 @@ class ssh_create(object):
             break
 
     def update_serverid_thread(self, data):
+        data['name'] = re.sub(r'https?://', '', data['link'])
         while True:
             try:
-                response = requests.request('GET', 'http://{name}{page}'.format(name=data['name'], page=data['page']), timeout=10)
+                response = requests.request('GET', '{link}{page}'.format(link=data['link'], page=data['page']), timeout=10)
                 response = BeautifulSoup(response.text, 'html.parser')
                 self.log('[G1]{name:.<44} [G1]200'.format(name=data['name']+' [G1]'))
                 for element in response.find_all(attrs={'class': data['pattern-class']}):
@@ -150,6 +151,7 @@ class ssh_create(object):
         threads = []
 
         for data in self.data_create_ssh:
+            data['name'] = re.sub(r'https?://', '', data['link'])
             name_available = False
             for account in self.accounts:
                 if account['name'] == data['name']:
@@ -214,4 +216,3 @@ class ssh_create(object):
             self.accounts = []
 
             self.log(value + ' complete')
-

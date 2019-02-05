@@ -17,7 +17,7 @@ def main():
 
     app.server((inject_host, inject_port), tunnel_type).start()
 
-    ssh_clients = app.ssh_clients(tunnel_type, inject_host, inject_port, socks5_ports=[socks5_port], http_requests_enable=False)
+    ssh_clients = app.ssh_clients(tunnel_type, inject_host, inject_port, socks5_ports=[socks5_port], http_requests_enable=False, log_connecting=False)
     ssh_clients.accounts = app.generate_accounts(app.convert_hostnames(real_path('/database/accounts.json')))
 
     while True:
@@ -34,11 +34,10 @@ def main():
 
         try:
             with threading.RLock():
-                command = input('\n:: '); print()
-                if command == 'exit': break 
+                command = str(input('\n:: ')); print()
+                if app.xstrip(command) == 'exit': break
         except KeyboardInterrupt: break
 
 
 if __name__ == '__main__':
     main()
-

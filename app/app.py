@@ -32,6 +32,15 @@ def colors(value):
         value = value.replace('[{code}]'.format(code=code), patterns[code])
     return value
 
+def xstrip(value, string=None):
+    value = value.strip(string).encode()    \
+        .replace(b'\x1b[A', b'')            \
+        .replace(b'\x1b[B', b'')            \
+        .replace(b'\x1b[C', b'')            \
+        .replace(b'\x1b[D', b'')            \
+        .decode()
+    return value
+
 def app_format(value, align, width, chars = ''):
     value = ('{:' + str(chars) + str(align) + str(width) + '}').format(value)
     return value

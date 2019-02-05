@@ -18,7 +18,7 @@
 # | 10.8.3.8       : 8080, 80
 # | 202.152.240.50 : 8080, 80
 #
-# --MB+ > Speed berkurang
+# 1GB+ > Speed berkurang
 #
 
 ---

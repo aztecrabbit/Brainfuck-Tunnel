@@ -1,7 +1,7 @@
 {
   "servers": [
     {
-      "name": "www.monthlyssh.com",
+      "link": "http://www.monthlyssh.com",
       "head": "/create-ssl/{serverid}/",
       "post": "/create-ssl.php",
       "page": "/ssl",
@@ -12,7 +12,7 @@
       "replace-password": ""
     },
     {
-      "name": "www.sshaccess.com",
+      "link": "https://www.sshaccess.com",
       "head": "/create-ssl-account-server/{serverid}/",
       "post": "/create-ssl-account.php",
       "page": "/ssl-server",
@@ -23,7 +23,7 @@
       "replace-password": ""
     },
     {
-      "name": "www.speedssh.com",
+      "link": "http://www.speedssh.com",
       "head": "/create-ssl-account-server/{serverid}/",
       "post": "/create-account-ssl.php",
       "page": "/ssl-server",
@@ -34,7 +34,7 @@
       "replace-password": ""
     },
     {
-      "name": "www.portssh.com",
+      "link": "http://www.portssh.com",
       "head": "/create-ssl-server/{serverid}/",
       "post": "/create-account-ssl.php",
       "page": "/ssl-server",
@@ -45,7 +45,7 @@
       "replace-password": ""
     },
     {
-      "name": "www.mytunneling.com",
+      "link": "https://www.mytunneling.com",
       "head": "/create-ssh-account-server-ssl/{serverid}/",
       "post": "/create-account-ssh-ssl.php",
       "page": "/ssh-ssl",
@@ -56,7 +56,7 @@
       "replace-password": ""
     },
     {
-      "name": "www.jetssh.com",
+      "link": "http://www.jetssh.com",
       "head": "/create-ssl-server/{serverid}/",
       "post": "/create-account-ssl.php",
       "page": "/ssl-server",
@@ -67,7 +67,7 @@
       "replace-password": ""
     },
     {
-      "name": "www.flyssh.com",
+      "link": "http://www.flyssh.com",
       "head": "/create-ssl/{serverid}/",
       "post": "/create-ssl.php",
       "page": "/ssl-server",

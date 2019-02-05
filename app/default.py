@@ -71,21 +71,19 @@ def generate_accounts(data_accounts):
 
     return accounts
 
-def main():
-    file_names = [
-        'config/config.json',
-        'config/payload.txt',
-        'config/server-name-indication.txt',
-        'database/accounts.json',
-        'database/authentications.json',
-        'database/servers.json'
-    ]
+file_names = [
+    'config/config.json',
+    'config/payload.txt',
+    'config/proxies.txt',
+    'config/server-name-indication.txt',
+    'database/accounts.json',
+    'database/authentications.json',
+    'database/servers.json'
+]
 
-    for file_name in file_names:
-        try:
-            open(real_path('/../' + file_name))
-        except FileNotFoundError:
-            shutil.copyfile(real_path('/default/' + file_name), real_path('/../' + file_name))
-        finally: pass
-
-main()
+for file_name in file_names:
+    try:
+        open(real_path('/../' + file_name))
+    except FileNotFoundError:
+        shutil.copyfile(real_path('/default/' + file_name), real_path('/../' + file_name))
+    finally: pass

@@ -2,6 +2,7 @@ import re
 import ssl
 import time
 import json
+import random
 import select
 import socket
 import threading
@@ -18,6 +19,7 @@ class server_tunnel(threading.Thread):
         self.quiet = quiet
 
         self.server_name_indication = open(real_path('/../config/server-name-indication.txt')).readlines()[0].strip()
+        self.proxies = []
         self.config = json.loads(open(real_path('/../config/config.json')).read())
 
         self.do_handshake_on_connect = True
@@ -25,8 +27,8 @@ class server_tunnel(threading.Thread):
         self.timeout = 3
         self.daemon = True
 
-    def log(self, value, status='[G1]INFO'):
-        if not self.quiet: log(value, status=status)
+    def log(self, value, status='INFO', status_color='[G1]'):
+        if not self.quiet: log(value, status=status, status_color=status_color)
 
     def log_replace(self, value):
         if not self.quiet: log_replace(value)
@@ -42,6 +44,26 @@ class server_tunnel(threading.Thread):
             self.log('[R1]Target host and port not found')
             return False
         self.host, self.port = result[1], int(result[3])
+        return True
+
+    def get_host_port(self, value):
+        result = re.findall(r'(([a-zA-Z0-9]+(\.[a-zA-Z0-9]+)+):([0-9]+))', value)
+        result = result[0] if len(result) else []
+        result = (result[1], int(result[3])) if len(result) else ''
+
+        return result
+
+    def get_proxy(self):
+        proxies = open(real_path('/../config/proxies.txt')).read().split('---')[0].splitlines()
+        for data in proxies:
+            if data and not data.startswith('#'):
+                proxy_host_port = self.get_host_port(data)
+                if proxy_host_port: self.proxies.append(proxy_host_port)
+        self.proxies = [x for x in self.proxies if x]
+        if len(self.proxies) == 0:
+            return False
+        self.proxy_host, self.proxy_port = self.proxies[random.randint(0, len(self.proxies)-1)]
+
         return True
 
     def payload(self):
@@ -146,6 +168,7 @@ class server_tunnel(threading.Thread):
     # Direct -> SSH
     def tunnel_type_0(self):
         try:
+            self.log('Connecting to {host} port {port}'.format(host=self.host, port=self.port))
             self.socket_tunnel.connect((self.host, int(self.port)))
             self.send_payload(self.payload())
             self.handler()
@@ -153,8 +176,6 @@ class server_tunnel(threading.Thread):
             pass
         except socket.error:
             pass
-        except Exception as exception:
-            self.log_exception(exception)
         finally:
             self.socket_tunnel.close()
             self.socket_client.close()
@@ -162,6 +183,7 @@ class server_tunnel(threading.Thread):
     # Direct -> SSH (SSL/TLS)
     def tunnel_type_1(self):
         try:
+            self.log('Connecting to {host} port {port}'.format(host=self.host, port=self.port))
             self.socket_tunnel.connect((self.host, int(self.port)))
             self.log('Server name indication: {server_hostname}'.format(server_hostname=self.server_name_indication))
             self.socket_tunnel = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2).wrap_socket(self.socket_tunnel, server_hostname=self.server_name_indication, do_handshake_on_connect=self.do_handshake_on_connect)
@@ -171,8 +193,6 @@ class server_tunnel(threading.Thread):
             pass
         except socket.error:
             pass
-        except Exception as exception:
-            self.log_exception(exception)
         finally:
             self.socket_tunnel.close()
             self.socket_client.close()
@@ -180,15 +200,16 @@ class server_tunnel(threading.Thread):
     # HTTP Proxy -> SSH
     def tunnel_type_2(self):
         try:
-            self.socket_tunnel.connect((self.config['proxy_host'], int(self.config['proxy_port'])))
+            if self.get_proxy() == False: return
+            self.log('Connecting to remote proxy {proxy_host} port {proxy_port}'.format(proxy_host=self.proxy_host, proxy_port=self.proxy_port))
+            self.socket_tunnel.connect((self.proxy_host, self.proxy_port))
+            self.log('Connecting to {host} port {port}'.format(host=self.host, port=self.port))
             self.send_payload(self.payload())
             self.proxy_handler()
         except socket.timeout:
             pass
         except socket.error:
             pass
-        except Exception as exception:
-            self.log_exception(exception)
         finally:
             self.socket_tunnel.close()
             self.socket_client.close()
@@ -202,14 +223,8 @@ class server_tunnel(threading.Thread):
             self.socket_client.close()
             return
 
-        self.log('Connecting to {host} port {port}'.format(host=self.host, port=self.port))
-
         if not self.tunnel_type :
             pass
         elif self.tunnel_type == '0': self.tunnel_type_0()
         elif self.tunnel_type == '1': self.tunnel_type_1()
         elif self.tunnel_type == '2': self.tunnel_type_2()
-
-
-
-

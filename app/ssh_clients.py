@@ -17,10 +17,11 @@ class ssh_clients(object):
     
     _connected = set()
 
-    def __init__(self, tunnel_type, inject_host, inject_port, socks5_ports, http_requests_enable=True):
+    def __init__(self, tunnel_type, inject_host, inject_port, socks5_ports, http_requests_enable=True, log_connecting=True):
         super(ssh_clients, self).__init__()
 
         self.http_requests_enable = http_requests_enable
+        self.log_connecting = log_connecting
         self.http_requests = http_requests(socks5_ports, self.http_requests_enable)
         self.socks5_ports = socks5_ports
         self.tunnel_type = tunnel_type
@@ -99,7 +100,9 @@ class ssh_clients(object):
             password = account['password']
             proxy_command = self.proxy_command
 
-            self.log('[G1]Connecting to {hostname} port {port}{end}'.format(hostname=hostname, port=port, end=' '*8), status='[G1]'+socks5_port)
+            if self.log_connecting == True:
+                self.log('[G1]Connecting to {hostname} port {port}{end}'.format(hostname=hostname, port=port, end=' '*8), status=socks5_port)
+            
             response = subprocess.Popen(
                 ('sshpass -p "{password}" ssh -v -CND {socks5_port} {host} -p {port} -l "{username}" ' + '-o StrictHostKeyChecking=no -o ProxyCommand="{proxy_command}"'.format(
                         proxy_command=proxy_command
