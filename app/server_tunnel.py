@@ -58,10 +58,11 @@ class server_tunnel(threading.Thread):
         for data in proxies:
             if data and not data.startswith('#'):
                 proxy_host_port = self.get_host_port(data)
-                if proxy_host_port: self.proxies.append(proxy_host_port)
+                if proxy_host_port:
+                    self.proxies.append(proxy_host_port)
         self.proxies = [x for x in self.proxies if x]
-        if len(self.proxies) == 0:
-            return False
+        if len(self.proxies) == 0: return False
+        random.shuffle(self.proxies)
         self.proxy_host, self.proxy_port = self.proxies[random.randint(0, len(self.proxies)-1)]
 
         return True

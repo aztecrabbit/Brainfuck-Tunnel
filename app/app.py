@@ -51,7 +51,7 @@ def json_shuffle(data):
     data = [(key, data[key]) for key in keys]
     return data
 
-def log(value, log_datetime=True, status='', status_color='[G1]'):
+def log(value, log_datetime=True, status='INFO', status_color='[G1]'):
     with lock:
         datetime_value = '[{value}] '.format(value=datetime.datetime.now().strftime('%H:%M:%S')) if log_datetime else ''
         status = '' if status == None else '[P1]:: {status_color}{status:>4} [P1]:: '.format(status=status, status_color=status_color)

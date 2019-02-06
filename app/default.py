@@ -71,19 +71,34 @@ def generate_accounts(data_accounts):
 
     return accounts
 
-file_names = [
-    'config/config.json',
-    'config/payload.txt',
-    'config/proxies.txt',
-    'config/server-name-indication.txt',
-    'database/accounts.json',
-    'database/authentications.json',
-    'database/servers.json'
-]
+def get_file_names():
+    return [
+        'config/config.json',
+        'config/payload.txt',
+        'config/proxies.txt',
+        'config/server-name-indication.txt',
+        'database/accounts.json',
+        'database/authentications.json',
+        'database/servers.json'
+    ]
 
-for file_name in file_names:
-    try:
-        open(real_path('/../' + file_name))
-    except FileNotFoundError:
-        shutil.copyfile(real_path('/default/' + file_name), real_path('/../' + file_name))
-    finally: pass
+def reset_to_default_settings():
+    for file_name in get_file_names():
+        try:
+            os.remove(real_path('/../' + file_name))
+        except FileNotFoundError: pass
+
+    default_settings()
+
+def default_settings():
+    for file_name in get_file_names():
+        try:
+            open(real_path('/../' + file_name))
+        except FileNotFoundError:
+            shutil.copyfile(real_path('/default/' + file_name), real_path('/../' + file_name))
+        finally: pass
+
+def autoload():
+    default_settings()
+
+autoload()

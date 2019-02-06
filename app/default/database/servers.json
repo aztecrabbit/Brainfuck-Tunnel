@@ -23,7 +23,7 @@
       "replace-password": ""
     },
     {
-      "link": "http://www.speedssh.com",
+      "link": "https://www.speedssh.com",
       "head": "/create-ssl-account-server/{serverid}/",
       "post": "/create-account-ssl.php",
       "page": "/ssl-server",
