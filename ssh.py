@@ -20,6 +20,7 @@ def main():
 
     if len(socks5_port_list) == 0:
         socks5_port_list.append('1080')
+    
 
     app.log('Inject set to {inject_host} port {inject_port}'.format(inject_host=inject_host, inject_port=inject_port), status='INFO')
 

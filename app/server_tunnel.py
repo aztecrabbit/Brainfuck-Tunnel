@@ -41,7 +41,7 @@ class server_tunnel(threading.Thread):
         result = re.findall(r'(([a-zA-Z0-9]+(\.[a-zA-Z0-9]+)+):([0-9]+))', self.client_request)
         result = result[0] if len(result) else ''
         if not result:
-            self.log('[R1]Target host and port not found')
+            self.log('[R1]Target host and port not found', status_color='[R1]')
             return False
         self.host, self.port = result[1], int(result[3])
         return True
