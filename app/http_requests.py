@@ -15,11 +15,11 @@ class http_requests(threading.Thread):
 
     def log(self, value, status='INFO', status_color='[G1]'):
         if not self.enable: return
-        log(value, status=status, status_color=status_color)
+        if not self._stop: log(value, status=status, status_color=status_color)
 
     def stop(self):
         if not self.enable: return
-        if self._stop == False: self.log('HTTP Requests stopped')
+        self.log('HTTP Requests stopped')
         self._stop = True
 
     def run(self):

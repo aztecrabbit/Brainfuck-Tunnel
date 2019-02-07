@@ -1,7 +1,7 @@
 {
   "servers": [
     {
-      "link": "http://www.monthlyssh.com",
+      "link": "https://www.monthlyssh.com",
       "head": "/create-ssl/{serverid}/",
       "post": "/create-ssl.php",
       "page": "/ssl",

@@ -9,15 +9,19 @@ def real_path(file_name):
     return os.path.dirname(os.path.abspath(__file__)) + file_name
 
 def main():
-    config = json.loads(open(real_path('/config/config.json')).read())
-    tunnel_type = str(config['tunnel_type'])
-    inject_host = str('127.0.0.1')
-    inject_port = int('9080')
-    socks5_port = str('2080')
+    try:
+        config_file = real_path('/config/config.json')
+        config = json.loads(open(config_file).read())
+        tunnel_type = str(config['tunnel_type'])
+        inject_host = str('127.0.0.1')
+        inject_port = int('9080')
+        socks5_port = str('2080')
+        socks5_port_list = [socks5_port]
+    except KeyError: app.json_error(config_file); return
 
     app.server((inject_host, inject_port), tunnel_type).start()
 
-    ssh_clients = app.ssh_clients(tunnel_type, inject_host, inject_port, socks5_ports=[socks5_port], http_requests_enable=False, log_connecting=False)
+    ssh_clients = app.ssh_clients(tunnel_type, inject_host, inject_port, socks5_port_list, http_requests_enable=False, log_connecting=False)
     ssh_clients.accounts = app.generate_accounts(app.convert_hostnames(real_path('/database/accounts.json')))
 
     while True:
@@ -30,13 +34,10 @@ def main():
         except KeyboardInterrupt:
             pass
         finally:
-            if ssh_clients.all_disconnected() == False: ssh_clients.all_disconnected_listener()
-
-        try:
-            with threading.RLock():
-                command = str(input('\n:: ')); print()
-                if app.xstrip(command) == 'exit': break
-        except KeyboardInterrupt: break
+            try:
+                if ssh_clients.all_disconnected() == False: ssh_clients.all_disconnected_listener()
+                if app.str_input('\n:: ', newline=True) == 'exit': break
+            except KeyboardInterrupt: break
 
 
 if __name__ == '__main__':

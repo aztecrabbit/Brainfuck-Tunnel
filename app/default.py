@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import json
 import socket
 import shutil
@@ -97,6 +98,14 @@ def default_settings():
         except FileNotFoundError:
             shutil.copyfile(real_path('/default/' + file_name), real_path('/../' + file_name))
         finally: pass
+
+def json_error(file):
+    value = ('[R1]Exception: {} \n\n').format(' ' * 24)                              + \
+            ('   File {} Error! \n').format(file).replace('/app/../', '/')           + \
+            ('   Run reset-to-default-settings.py first or fixing by your-self. \n') + \
+            ('   Good-luck! \n')
+
+    log(value, status_color='[R1]')
 
 def autoload():
     default_settings()

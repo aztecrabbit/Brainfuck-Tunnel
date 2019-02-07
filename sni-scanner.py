@@ -1,11 +1,7 @@
-import os
 import re
 import app
 import ssl
-import sys
 import socket
-import datetime
-import threading
 
 
 def log(value, status='INFO', status_color='[G1]'):
@@ -19,18 +15,13 @@ def main():
     port = int('443')
 
     while True:
-        server_name_indications = re.sub(r'\s+', ' ', str(input(':: '))).split(' '); print()
+        value = app.str_input(':: ', newline=True)
+        if value == 'exit': break
+        server_name_indications = re.sub(r'\s+', ' ', value).split(' ')
+        server_name_indications = list(set(app.filter_array(server_name_indications)))
 
-        if len(server_name_indications) == 1 and app.xstrip(server_name_indications[0]) == '':
-            continue
-
-        if len(server_name_indications) == 1 and app.xstrip(server_name_indications[0]) == 'exit':
-            break
-
-        for i in range(len(server_name_indications)):
+        for server_name_indication in server_name_indications:
             try:
-                server_name_indication = app.xstrip(server_name_indications[i])
-                if not server_name_indication: continue
                 socket_tunnel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 socket_tunnel.settimeout(3)
                 log('Connecting to {host} port {port}'.format(host=host, port=port))

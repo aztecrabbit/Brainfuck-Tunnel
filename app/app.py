@@ -32,13 +32,21 @@ def colors(value):
         value = value.replace('[{code}]'.format(code=code), patterns[code])
     return value
 
+def filter_array(array):
+    for i in range(len(array)):
+        if array[i].startswith('#'): array[i] = ''
+
+    array = [x for x in array if x]
+
+    return array
+
 def xstrip(value, string=None):
     value = value.strip(string).encode()    \
         .replace(b'\x1b[A', b'')            \
         .replace(b'\x1b[B', b'')            \
         .replace(b'\x1b[C', b'')            \
         .replace(b'\x1b[D', b'')            \
-        .decode()
+        .decode().strip()
     return value
 
 def app_format(value, align, width, chars = ''):
@@ -50,6 +58,13 @@ def json_shuffle(data):
     random.shuffle(keys)
     data = [(key, data[key]) for key in keys]
     return data
+
+def str_input(value, newline=False):
+    with lock:
+        string = xstrip(str(input(value)))
+        if newline: print()
+
+    return string
 
 def log(value, log_datetime=True, status='INFO', status_color='[G1]'):
     with lock:

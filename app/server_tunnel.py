@@ -6,7 +6,7 @@ import random
 import select
 import socket
 import threading
-from .app import *
+from .app           import *
 from .ssh_statistic import *
 
 
@@ -54,17 +54,15 @@ class server_tunnel(threading.Thread):
         return result
 
     def get_proxy(self):
-        proxies = open(real_path('/../config/proxies.txt')).read().split('---')[0].splitlines()
-        for data in proxies:
-            if data and not data.startswith('#'):
-                proxy_host_port = self.get_host_port(data)
-                if proxy_host_port:
-                    self.proxies.append(proxy_host_port)
-        self.proxies = [x for x in self.proxies if x]
-        if len(self.proxies) == 0: return False
+        data_proxies = open(real_path('/../config/proxies.txt')).read().split('---')[0].splitlines()
+        data_proxies = filter_array(data_proxies)
+        for data_proxy in data_proxies:
+            proxy = self.get_host_port(data_proxy)
+            if proxy: self.proxies.append(proxy)
+        if len(self.proxies) == 0:
+            return False
         random.shuffle(self.proxies)
         self.proxy_host, self.proxy_port = self.proxies[random.randint(0, len(self.proxies)-1)]
-
         return True
 
     def payload(self):
@@ -137,7 +135,7 @@ class server_tunnel(threading.Thread):
                             ssh_statistic('upload')
                         timeout = 0
                     except: break
-            if timeout == 60: break
+            if timeout == 30: break
 
     def convert_response(self, response):
         if response.startswith('HTTP'):
@@ -157,13 +155,13 @@ class server_tunnel(threading.Thread):
             response = self.socket_tunnel.recv(self.buffer_size).decode('charmap')
             if not response: break
             response_status = response.replace('\r', '').split('\n')[0]
-            if re.match(r'HTTP/[0-9](\.[0-9])? 200 (OK|Connection established)', response_status):
+            if re.match(r'HTTP/\d(\.\d)? 200 .+', response_status):
                 self.log('Response: {}'.format(self.convert_response(response)))
                 self.handler()
                 break
             else:
                 self.log('Response: {}'.format(self.convert_response(response)))
-                self.socket_tunnel.sendall(b'HTTP/1.0 Connection established\r\n\r\n')
+                self.socket_tunnel.sendall(b'HTTP/1.1 200 OK\r\n\r\n')
                 x += 1
 
     # Direct -> SSH

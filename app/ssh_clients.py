@@ -8,6 +8,7 @@ import requests
 import threading
 import subprocess
 from .app            import *
+from .default        import *
 from .ssh_create     import *
 from .ssh_statistic  import *
 from .http_requests  import *
@@ -17,33 +18,34 @@ class ssh_clients(object):
     
     _connected = set()
 
-    def __init__(self, tunnel_type, inject_host, inject_port, socks5_ports, http_requests_enable=True, log_connecting=True):
+    def __init__(self, tunnel_type, inject_host, inject_port, socks5_port_list, http_requests_enable=True, log_connecting=True):
         super(ssh_clients, self).__init__()
 
         self.http_requests_enable = http_requests_enable
+        self.socks5_port_list = socks5_port_list
         self.log_connecting = log_connecting
-        self.http_requests = http_requests(socks5_ports, self.http_requests_enable)
-        self.socks5_ports = socks5_ports
         self.tunnel_type = tunnel_type
         self.inject_host = inject_host
         self.inject_port = inject_port
+
+        self.http_requests = http_requests(self.socks5_port_list, self.http_requests_enable)
+        self.proxy_command = ''
         self.accounts = []
         self.unique = 0
         self.daemon = True
 
         try:
             self.proxy_command = json.loads(open(real_path('/../config/config.json')).read())['proxy_command']
-        except:
-            self.proxy_command = ""
+        except: pass
 
     def log(self, value, status='', status_color='[G1]'):
         log(value, status=status, status_color=status_color)
 
     def connected(self, socks5_port):
         self._connected.add(socks5_port)
-        if len(self._connected) == len(self.socks5_ports):
+        if len(self._connected) == len(self.socks5_port_list):
             self.log('[Y1]Connected', status='all', status_color='[Y1]')
-            self.http_requests = http_requests(self.socks5_ports, self.http_requests_enable)
+            self.http_requests = http_requests(self.socks5_port_list, self.http_requests_enable)
             self.http_requests.start()
 
     def disconnected(self, socks5_port):
@@ -64,17 +66,16 @@ class ssh_clients(object):
 
     def start(self):
         if not self.proxy_command:
-            value  = '[R1]Exception:' + ' ' * 24 + '\n\n'
-            value += '   File {file} Error!\n'.format(file=real_path('/../config/config.json')).replace('/app/../', '/')
-            value += '   Please delete that file or fixing by your-self.\n'
-            value += '   Good-luck!\n'
-            self.log(value, status='[R1]INFO')
+            json_error(real_path('/../config/config.json'))
             return
+
+        if len(self.socks5_port_list) == 0:
+            self.socks5_port_list.append('1080')
 
         while True:
             try:
                 ssh_statistic('clear')
-                for socks5_port in self.socks5_ports:
+                for socks5_port in self.socks5_port_list:
                     time.sleep(0.025)
                     thread = threading.Thread(target=self.ssh_client, args=(self.unique, socks5_port, ))
                     thread.daemon = True
@@ -87,6 +88,10 @@ class ssh_clients(object):
                 self.all_disconnected_listener()
 
     def ssh_client(self, unique, socks5_port):
+        if not self.proxy_command:
+            json_error(real_path('/../config/config.json'))
+            return
+
         while self.unique == unique:
             subprocess.Popen('rm -rf ~/.ssh/known_hosts', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
 
