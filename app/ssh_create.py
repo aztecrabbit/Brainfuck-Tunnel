@@ -28,14 +28,14 @@ class ssh_create(object):
         self._created = 0
         self._total = 0
 
-    def log(self, value, status=None):
-        log(value, status=status)
+    def log(self, value, status=None, status_color='[G1]'):
+        log(value, status=status, status_color=status_color)
 
-    def log_replace(self, value, log_datetime=False):
-        log_replace(value, log_datetime=log_datetime)
+    def log_replace(self, value, time=False):
+        log_replace(value, time=time)
 
-    def log_exception(self, value, status=None):
-        log_exception(value, status=status)
+    def log_exception(self, value):
+        log_exception(value)
 
     def get_cookies(self, browser):
         return requests.utils.dict_from_cookiejar(browser.cookies)
@@ -91,10 +91,10 @@ class ssh_create(object):
             finally:
                 self.log(results[:-7] + '[R2]END' if i == x else results)
             if loop:
-                self.log_replace('[Y1]{}'.format(self.total()), log_datetime=False)
+                self.log_replace(self.total())
                 continue
             self.created()
-            self.log_replace('[Y1]{}'.format(self.total()), log_datetime=False)
+            self.log_replace(self.total())
             break
 
     def update_serverid_thread(self, data):
@@ -201,11 +201,11 @@ class ssh_create(object):
             self._total = self.queue_accounts.qsize()
 
             for hostname in self.hostname_empty_serverid:
-                self.log('[R1]{hostname:.<44} [R1](empty serverid)'.format(hostname=hostname+' [G1]'))
+                self.log('[R1]{:.<44} [R1](empty serverid)'.format(hostname+' [G1]'))
 
-            value = '[G1]Creating {} ssh accounts'.format(self._total)
+            value = 'Creating {} ssh accounts'.format(self._total)
             self.log(value + ' ' * 8)
-            self.log_replace('[Y1]{}'.format(self.total()), log_datetime=False)
+            self.log_replace(self.total())
 
             for i in range(self.queue_threads):
                 thread = threading.Thread(target=self.create_thread)

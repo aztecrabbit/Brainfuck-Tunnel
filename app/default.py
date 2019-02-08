@@ -28,17 +28,17 @@ def convert_hostnames(file_path):
                     continue
                 try:
                     if timeout == 3: break
-                    log_replace('[Y1][{}/{}] Converting hostnames'.format(app_format(loop+1, align='>', width=len(str(length)), chars='0'), length), log_datetime=True, status='[Y1]INFO')
+                    log_replace('[{}/{}] Converting hostnames'.format(app_format(loop+1, align='>', width=len(str(length)), chars='0'), length), time=True, status='INFO', status_color='[Y1]')
                     host = ''
                     host = socket.gethostbyname(account['hostname'])
                     if not host:
                         raise socket.gaierror
                     elif host != account['host']:
-                        log('[G1]{:.<19} [Y1]{:.<23} {}'.format((account['host'] if account['host'] else '(empty)')+' ', host+' [G1]', account['hostname']), status='[G1]INFO')
+                        log('{:.<19} [Y1]{:.<23} {}'.format((account['host'] if account['host'] else '(empty)')+' ', host+' [G1]', account['hostname']), status='INFO', status_color='[G1]')
                         data_accounts[name][i]['host'] = host
                         timeout = 0
                 except socket.gaierror:
-                    log('[R1][{}/{}] Converting hostnames error'.format(app_format(timeout+1, align='>', width=len(str(length)), chars='0'), app_format('3', align='>', width=len(str(length)), chars='0')), status='[R1]INFO')
+                    log('[{}/{}] Converting hostnames error'.format(app_format(timeout+1, align='>', width=len(str(length)), chars='0'), app_format('3', align='>', width=len(str(length)), chars='0')), status='INFO', status_color='[R1]')
                     timeout = timeout + 1
                 finally:
                     loop = loop + 1

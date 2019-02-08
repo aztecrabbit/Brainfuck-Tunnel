@@ -1,7 +1,5 @@
 import os
 import sys
-import time
-import signal
 import socket
 import datetime
 import threading
@@ -66,17 +64,35 @@ def str_input(value, newline=False):
 
     return string
 
-def log(value, log_datetime=True, status='INFO', status_color='[G1]'):
-    with lock:
-        datetime_value = '[{value}] '.format(value=datetime.datetime.now().strftime('%H:%M:%S')) if log_datetime else ''
-        status = '' if status == None else '[P1]:: {status_color}{status:>4} [P1]:: '.format(status=status, status_color=status_color)
-        print(colors('[G1]{datetime}{status}[G1]{value}[CC]'.format(datetime=datetime_value, status=status, value=value)))
+def log_format(value, time=True, status=None, status_color=''):
+    value_status = ''
+    value_time = ''
 
-def log_replace(value, log_datetime=False, status=None):
-    datetime_value = '[{value}] '.format(value=datetime.datetime.now().strftime('%H:%M:%S')) if log_datetime else ''
-    status = '' if status == None else '[P1]:: [G1]{status:>4} [P1]:: '.format(status=status)
-    sys.stdout.write(colors('[G1]{datetime}{status}[G1]{value}[CC]{cr}'.format(datetime=datetime_value, status=status, value=value, cr='\r')))
+    if status is not None:
+        value_status = '[P1]:: [G1]{}{:>4} [P1]:: '.format(status_color, status)
+    
+    if time == True:
+        value_time = '{}[{}] '.format(status_color, datetime.datetime.now().strftime('%H:%M:%S'))
+
+    return colors(
+        '{value_time}{value_status}{status_color}{value}{end}'.format(
+            value_time=value_time,
+            value_status=value_status,
+            status_color=status_color,
+            value=value,
+            end='[CC]'
+        )
+    )
+
+def log(value, time=True, status='INFO', status_color='[G1]'):
+    with lock:
+        print(log_format(value, time=time, status=status, status_color=status_color))
+
+def log_replace(value, time=False, status=None, status_color='[Y1]'):
+    sys.stdout.write('\r')
+    sys.stdout.write(log_format(value, time=time, status=status, status_color=status_color))
+    sys.stdout.write('\r')
     sys.stdout.flush()
 
-def log_exception(value, log_datetime=True, status=''):
-    log('[R1]Exception: {value}'.format(value=value), log_datetime=log_datetime, status=status)
+def log_exception(value, time=True, status='INFO', status_color='[R1]'):
+    log('Exception: {}'.format(value), time=time, status=status, status_color='[R1]')

@@ -20,11 +20,24 @@ def main():
 
     app.server((inject_host, inject_port)).start()
 
-    ssh_clients = app.ssh_clients(inject_host, inject_port, socks5_port_list, http_requests_enable=False, log_connecting=False)
+    ssh_clients = app.ssh_clients(inject_host, inject_port, socks5_port_list, http_requests_enable=False, log_connecting=False, dynamic_port_forwarding=False)
     ssh_clients.accounts = app.generate_accounts(app.convert_hostnames(real_path('/database/accounts.json')))
+
+    app.log('Type debug for debugging log')
+    app.log('Type exit to exit')
 
     while True:
         try:
+            ssh_clients.debug = False
+            exit = False
+
+            command = app.str_input('\n:: ', newline=True)
+            if command == 'exit':
+                exit = True
+                break
+            if command == 'debug':
+                ssh_clients.debug = True
+
             app.ssh_statistic('clear')
             threading.Thread(target=ssh_clients.ssh_client, args=(ssh_clients.unique, socks5_port, )).start()
             ssh_clients._connected.add(socks5_port)
@@ -33,11 +46,8 @@ def main():
         except KeyboardInterrupt:
             pass
         finally:
-            try:
-                if ssh_clients.all_disconnected() == False: ssh_clients.all_disconnected_listener()
-                if app.str_input('\n:: ', newline=True) == 'exit': break
-            except KeyboardInterrupt: break
-
+            if not exit and ssh_clients.all_disconnected() == False:
+                ssh_clients.all_disconnected_listener()
 
 if __name__ == '__main__':
     main()

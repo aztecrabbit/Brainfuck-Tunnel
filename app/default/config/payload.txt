@@ -1,6 +1,3 @@
-[method] [host_port] [protocol][crlf][crlf]
-
-
 # Default
 #
 

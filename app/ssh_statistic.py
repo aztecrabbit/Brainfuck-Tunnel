@@ -31,12 +31,12 @@ class ssh_statistic(threading.Thread):
                         return
 
                     open(file, 'w').write(str(download) + ' ' + str(upload))
-                log_replace('[Y1]Down: {download} Up: {upload}'.format(download=download, upload=upload))
+                log_replace('Down: {download} Up: {upload}'.format(download=download, upload=upload))
             except FileNotFoundError:
                 open(file, 'w')
                 continue
             except RuntimeError:
                 pass
             except Exception as exception:
-                log('[R1]Exception: {exception}'.format(exception=exception), status='[R1]INFO')
+                log_exception(exception)
             break

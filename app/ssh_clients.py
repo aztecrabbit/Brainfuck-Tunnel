@@ -18,9 +18,10 @@ class ssh_clients(object):
     
     _connected = set()
 
-    def __init__(self, inject_host, inject_port, socks5_port_list, http_requests_enable=True, log_connecting=True):
+    def __init__(self, inject_host, inject_port, socks5_port_list=[], http_requests_enable=True, log_connecting=True, dynamic_port_forwarding=True):
         super(ssh_clients, self).__init__()
 
+        self.dynamic_port_forwarding = dynamic_port_forwarding
         self.http_requests_enable = http_requests_enable
         self.socks5_port_list = socks5_port_list
         self.log_connecting = log_connecting
@@ -32,9 +33,13 @@ class ssh_clients(object):
         self.accounts = []
         self.unique = 0
         self.daemon = True
+        self.debug = False
 
-    def log(self, value, status='', status_color='[G1]'):
+    def log(self, value, status='INFO', status_color='[G1]'):
         log(value, status=status, status_color=status_color)
+
+    def log_debug(self, value, status='DBUG', status_color='[G2]'):
+        if self.debug: log(value, status=status, status_color=status_color)
 
     def connected(self, socks5_port):
         self._connected.add(socks5_port)
@@ -92,26 +97,28 @@ class ssh_clients(object):
 
     def ssh_client(self, unique, socks5_port):
         while self.unique == unique:
-            subprocess.Popen('rm -rf ~/.ssh/known_hosts', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+            #subprocess.Popen('rm -rf ~/.ssh/known_hosts', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
 
             if self.get_config() is not None:
                 self.disconnected(socks5_port)
                 break
 
+            dynamic_port_forwarding = '-CND {}'.format(socks5_port) if self.dynamic_port_forwarding else ''
+            proxy_command = self.proxy_command
+
             account = random.choice(self.accounts)
             host = account['host']
-            port = '80' if not self.tunnel_type or self.tunnel_type == '0' or self.tunnel_type == '2' else '443'
+            port = '443' if self.tunnel_type == '1' else '80'
             hostname = account['hostname']
             username = account['username']
             password = account['password']
-            proxy_command = self.proxy_command
 
             if self.log_connecting == True:
                 self.log('[G1]Connecting to {hostname} port {port}{end}'.format(hostname=hostname, port=port, end=' '*8), status=socks5_port)
             
             response = subprocess.Popen(
                 (
-                    'sshpass -p "{password}" ssh -v -CND {socks5_port} {host} -p {port} -l "{username}" ' + '-o StrictHostKeyChecking=no -o ProxyCommand="{proxy_command}"'.format(
+                    'sshpass -p "{password}" ssh -v {dynamic_port_forwarding} {host} -p {port} -l "{username}" ' + '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="{proxy_command}"'.format(
                         proxy_command=proxy_command
                     )
                 ).format(
@@ -121,7 +128,7 @@ class ssh_clients(object):
                     password=password,
                     inject_host=self.inject_host,
                     inject_port=self.inject_port,
-                    socks5_port=socks5_port
+                    dynamic_port_forwarding=dynamic_port_forwarding
                 ),
                 shell=True,
                 stdout=subprocess.PIPE,
@@ -129,9 +136,11 @@ class ssh_clients(object):
             )
 
             for line in response.stdout:
-                line = line.decode()
+                line = line.decode().lstrip(r'(debug1|Warning):').lstrip().rstrip('\n')
 
-                if 'Authentication succeeded' in line:
+                self.log_debug(line)
+
+                if 'pledge: proc' in line:
                     self.connected(socks5_port)
 
                 elif 'Permission denied' in line:
@@ -140,7 +149,9 @@ class ssh_clients(object):
                 elif 'Connection closed' in line:
                     self.log('[R1]Connection closed', status=socks5_port, status_color='[R1]')
 
-                elif 'Address already in use' in line:
+                elif 'Could not request local forwarding' in line:
                     self.log('[R1]Port used by another programs', status=socks5_port, status_color='[R1]')
+                    unique -= 1
+                    break
 
             self.disconnected(socks5_port)

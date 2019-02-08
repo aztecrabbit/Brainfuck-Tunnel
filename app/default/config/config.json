@@ -3,24 +3,24 @@
 	"inject_host_external": "127.0.0.1",
 	"inject_port_external": "3128",
 	"socks5_port_list_external": [
-		"1080"
+		"#1080",
+		"#1081",
+		"#1082",
+		"#1083",
+		"#1084",
+		"#1085"
 	],
 
 	"tunnel_type": "0",
 	"inject_host": "127.0.0.1",
 	"inject_port": "8080",
 	"socks5_port_list": [
-		"1080",
-		"1081",
-		"1082",
-		"1083",
-		"1084",
-		"1085",
-
-		"#1086",
-		"#1087",
-		"#1088",
-		"#1089"
+		"#1080",
+		"#1081",
+		"#1082",
+		"#1083",
+		"#1084",
+		"#1085"
 	],
 
 	"proxy_command": "ncat --proxy-type http --proxy {inject_host}:{inject_port} %host %port",
