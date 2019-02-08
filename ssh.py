@@ -17,10 +17,9 @@ def main():
         socks5_port_list = app.filter_array(config['socks5_port_list_external'])
     except KeyError: app.json_error(config_file); return
 
-    if len(socks5_port_list) == 0:
-        socks5_port_list.append('1080')
+    if len(socks5_port_list) == 0: socks5_port_list.append('1080')
     
-    app.log('Inject set to {inject_host} port {inject_port}'.format(inject_host=inject_host, inject_port=inject_port), status='INFO')
+    app.log('Inject set to {} port {}'.format(inject_host, inject_port))
 
     ssh_clients = app.ssh_clients(inject_host, inject_port, socks5_port_list)
     ssh_clients.accounts = app.generate_accounts(app.convert_hostnames(real_path('/database/accounts.json')))

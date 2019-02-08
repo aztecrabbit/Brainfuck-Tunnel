@@ -12,7 +12,6 @@ def main():
     try:
         config_file = real_path('/config/config.json')
         config = json.loads(open(config_file).read())
-        tunnel_type = str(config['tunnel_type'])
         inject_host = str('127.0.0.1')
         inject_port = int('9080')
         socks5_port = str('2080')

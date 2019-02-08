@@ -15,13 +15,15 @@ def main():
     port = int('443')
 
     while True:
-        value = app.str_input(':: ', newline=True)
-        if value == 'exit': break
-        server_name_indications = re.sub(r'\s+', ' ', value).split(' ')
-        server_name_indications = list(set(app.filter_array(server_name_indications)))
+        server_name_indications = app.str_input(':: ', newline=True)
+        server_name_indications = app.filter_array(re.sub(r'\s+', ' ', server_name_indications).split(' '))
+
+        if len(server_name_indications) and server_name_indications[0] == 'exit':
+            break
 
         for server_name_indication in server_name_indications:
             try:
+                if server_name_indication == 'exit': print(':: exit'); return
                 socket_tunnel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 socket_tunnel.settimeout(3)
                 log('Connecting to {host} port {port}'.format(host=host, port=port))
