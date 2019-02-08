@@ -34,7 +34,7 @@
       "replace-password": ""
     },
     {
-      "link": "http://www.portssh.com",
+      "link": "https://www.portssh.com",
       "head": "/create-ssl-server/{serverid}/",
       "post": "/create-account-ssl.php",
       "page": "/ssl-server",
@@ -56,7 +56,7 @@
       "replace-password": ""
     },
     {
-      "link": "http://www.jetssh.com",
+      "link": "https://www.jetssh.com",
       "head": "/create-ssl-server/{serverid}/",
       "post": "/create-account-ssl.php",
       "page": "/ssl-server",
@@ -67,7 +67,7 @@
       "replace-password": ""
     },
     {
-      "link": "http://www.flyssh.com",
+      "link": "https://www.flyssh.com",
       "head": "/create-ssl/{serverid}/",
       "post": "/create-ssl.php",
       "page": "/ssl-server",
