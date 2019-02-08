@@ -19,9 +19,9 @@ def main():
         socks5_port_list = [socks5_port]
     except KeyError: app.json_error(config_file); return
 
-    app.server((inject_host, inject_port), tunnel_type).start()
+    app.server((inject_host, inject_port)).start()
 
-    ssh_clients = app.ssh_clients(tunnel_type, inject_host, inject_port, socks5_port_list, http_requests_enable=False, log_connecting=False)
+    ssh_clients = app.ssh_clients(inject_host, inject_port, socks5_port_list, http_requests_enable=False, log_connecting=False)
     ssh_clients.accounts = app.generate_accounts(app.convert_hostnames(real_path('/database/accounts.json')))
 
     while True:

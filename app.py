@@ -16,15 +16,14 @@ def main():
         socks5_port_list = app.filter_array(config['socks5_port_list'])
     except KeyError: app.json_error(config_file); return
 
-    if len(socks5_port_list) == 0:
-        socks5_port_list.append('1080')
+    if len(socks5_port_list) == 0: socks5_port_list.append('1080')
 
     log_connecting = True if len(socks5_port_list) > 1 else False
     quiet = True if len(socks5_port_list) > 1 else False
 
-    app.server((inject_host, inject_port), tunnel_type, quiet).start()
+    app.server((inject_host, inject_port), quiet=quiet).start()
 
-    ssh_clients = app.ssh_clients(tunnel_type, inject_host, inject_port, socks5_port_list, log_connecting=log_connecting)
+    ssh_clients = app.ssh_clients(inject_host, inject_port, socks5_port_list, log_connecting=log_connecting)
     ssh_clients.accounts = app.generate_accounts(app.convert_hostnames(real_path('/database/accounts.json')))
     ssh_clients.start()
 
