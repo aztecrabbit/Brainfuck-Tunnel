@@ -43,7 +43,7 @@ class ssh_clients(object):
 
     def connected(self, socks5_port):
         self._connected.add(socks5_port)
-        if len(self._connected) == len(self.socks5_port_list):
+        if len(self._connected) >= len(self.socks5_port_list):
             self.log('[Y1]Connected', status='all', status_color='[Y1]')
             self.http_requests = http_requests(self.socks5_port_list, self.http_requests_enable)
             self.http_requests.start()
@@ -136,7 +136,7 @@ class ssh_clients(object):
             )
 
             for line in response.stdout:
-                line = line.decode().lstrip(r'(debug1|Warning):').lstrip().rstrip('\n')
+                line = line.decode().lstrip(r'(debug1|Warning):').strip() + '\r'
 
                 self.log_debug(line)
 

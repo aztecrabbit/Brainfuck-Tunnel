@@ -158,7 +158,7 @@ class server_tunnel(threading.Thread):
             if not response: break
             response_status = response.replace('\r', '').split('\n')[0]
             if re.match(r'HTTP/\d(\.\d)? 200 .+', response_status):
-                self.log('Response: {}'.format(self.convert_response(response)))
+                self.log('Response: {}|\n|\n'.format(self.convert_response(response)))
                 self.handler()
                 break
             else:

@@ -80,7 +80,7 @@ def log_format(value, time=True, status=None, status_color=''):
             value_status=value_status,
             status_color=status_color,
             value=value,
-            end='[CC]'
+            end='[CC]\r'
         )
     )
 
@@ -89,10 +89,9 @@ def log(value, time=True, status='INFO', status_color='[G1]'):
         print(log_format(value, time=time, status=status, status_color=status_color))
 
 def log_replace(value, time=False, status=None, status_color='[Y1]'):
-    sys.stdout.write('\r')
-    sys.stdout.write(log_format(value, time=time, status=status, status_color=status_color))
-    sys.stdout.write('\r')
-    sys.stdout.flush()
+    with lock:
+        sys.stdout.write(log_format(value, time=time, status=status, status_color=status_color))
+        sys.stdout.flush()
 
 def log_exception(value, time=True, status='INFO', status_color='[R1]'):
     log('Exception: {}'.format(value), time=time, status=status, status_color='[R1]')
