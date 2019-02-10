@@ -6,7 +6,7 @@ SSH Tunneling for Dynamic Port Forwarding (Free charge Internet Access)
 Requirements
 ------------
 
-#### Packages
+### Packages
 
     nc (openbsd-version) (be aware if you are installing wrong nc)
     openssh
@@ -16,12 +16,12 @@ Requirements
     python3-pip
 
 
-#### Using Termux on Android?
+### Using Termux on Android?
 
     $ pkg install pip python openssh sshpass corkscrew
 
 
-#### Using Cygwin on Windows?
+### Using Cygwin on Windows?
 
 **1. apt-cyg**
 
@@ -44,7 +44,8 @@ Requirements
     $ make install
 
 
-#### Python 3 Modules
+Python 3 Modules
+----------------
 
     $ python3 -m pip install --upgrade pip
     $ python3 -m pip install requests beautifulsoup4
@@ -54,7 +55,7 @@ Requirements
 Configurations
 --------------
 
-Run `app.py` first to export `config.json` to `config/config.json`
+Run `reset.py` first to export all default settings
 
 **1. Tunel Type**
 
@@ -65,25 +66,32 @@ Run `app.py` first to export `config.json` to `config/config.json`
 
 **2. SOCKS5 Port**
 
-    "socks5_port_external": [
-      "1081",
-      "1082",
-      "1083"
+    "socks5_port_list_external": [
+      "#1080",
+      "#1081",
+      "#1082",
+      "#1083",
+      "#1084",
+      "#1085"
     ]
 
-    "socks5_port": [
+    "socks5_port_list": [
+      "1080",
       "1081",
       "1082",
-      "1083"
+      "1083",
+      "1084",
+      "1085"
     ]
 
-If `socks5_port_external` or `socks5_port` like that. You will execute 3 SSH Clients.
+If `socks5_port_list_external` like that (no port or all port commented), You will execute 1 SSH Client (default port: `1080`).
+If `socks5_port_list` like that. You will execute 5 SSH Clients.
 Add ports to execute more SSH Clients.
 
 
 **3. Proxy Command**
 
-Please googling for this topic.
+Please googling for this topic or see `config/config.json` (run `reset.py` first).
 
     proxy_host: {inject_host}
     proxy_port: {inject_port}
@@ -102,8 +110,8 @@ Note
     Ctrl-Pause to Exit
 
 
-Contacts
---------
+Contact
+-------
 
 Facebook Group : [Internet Freedom]
 

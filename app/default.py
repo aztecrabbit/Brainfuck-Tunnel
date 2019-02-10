@@ -75,8 +75,8 @@ def generate_accounts(data_accounts):
 def get_file_names():
     return [
         'config/config.json',
-        'config/payload.txt',
         'config/proxies.txt',
+        'config/payload.txt',
         'config/server-name-indication.txt',
         'database/accounts.json',
         'database/authentications.json',
@@ -97,13 +97,12 @@ def default_settings():
             open(real_path('/../' + file_name))
         except FileNotFoundError:
             shutil.copyfile(real_path('/default/' + file_name), real_path('/../' + file_name))
-        finally: pass
 
 def json_error(file):
-    value = ('[R1]Exception: {} \n\n').format(' ' * 24)                              + \
-            ('   File {} Error! \n').format(file).replace('/app/../', '/')           + \
-            ('   Run reset-to-default-settings.py first or fixing by your-self. \n') + \
-            ('   Good-luck! \n')
+    value = 'Exception: {} \n\n'.format(' ' * 24)                           + \
+            '   File {} Error! \n'.format(file).replace('/app/../', '/')    + \
+            '   Run reset.py first or fixing by your-self. \n'              + \
+            '   Good-luck! \n'
 
     log(value, status_color='[R1]')
 
