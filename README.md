@@ -1,6 +1,6 @@
 # Brainfuck Tunnel
 
-SSH Tunneling for Dynamic Port Forwarding (Free charge Internet Access)
+SSH Tunneling for Dynamic Port Forwarding (Free charge Internet Access).
 
 
 Requirements
@@ -55,7 +55,7 @@ Python 3 Modules
 Configurations
 --------------
 
-Run `reset.py` first to export all default settings
+Run `reset.py` first to export all default settings.
 
 **1. Tunel Type**
 

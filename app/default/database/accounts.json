@@ -155,61 +155,61 @@
     "www.mytunneling.com": [
       {
         "host": "",
-        "hostname": "sgdo1.ssl.ipmy.co",
+        "hostname": "sgdo1.ssl.ipmy.us",
         "username": "tunvpn.com-{username}",
         "password": "{password}"
       },
       {
         "host": "",
-        "hostname": "sgdo2.ssl.ipmy.co",
+        "hostname": "sgdo2.ssl.ipmy.us",
         "username": "tunvpn.com-{username}",
         "password": "{password}"
       },
       {
         "host": "",
-        "hostname": "sgdo3.ssl.ipmy.co",
+        "hostname": "sgdo3.ssl.ipmy.us",
         "username": "tunvpn.com-{username}",
         "password": "{password}"
       },
       {
         "host": "",
-        "hostname": "us1.ssl.ipmy.co",
+        "hostname": "us1.ssl.ipmy.us",
         "username": "tunvpn.com-{username}",
         "password": "{password}"
       },
       {
         "host": "",
-        "hostname": "us2.ssl.ipmy.co",
+        "hostname": "us2.ssl.ipmy.us",
         "username": "tunvpn.com-{username}",
         "password": "{password}"
       },
       {
         "host": "",
-        "hostname": "jp1.ssl.ipmy.co",
+        "hostname": "jp1.ssl.ipmy.us",
         "username": "tunvpn.com-{username}",
         "password": "{password}"
       },
       {
         "host": "",
-        "hostname": "id.ssl.ipmy.co",
+        "hostname": "id.ssl.ipmy.us",
         "username": "tunvpn.com-{username}",
         "password": "{password}"
       },
       {
         "host": "",
-        "hostname": "nl.ssl.ipmy.co",
+        "hostname": "nl.ssl.ipmy.us",
         "username": "tunvpn.com-{username}",
         "password": "{password}"
       },
       {
         "host": "",
-        "hostname": "uk.ssl.ipmy.co",
+        "hostname": "uk.ssl.ipmy.us",
         "username": "tunvpn.com-{username}",
         "password": "{password}"
       },
       {
         "host": "",
-        "hostname": "de.ssl.ipmy.co",
+        "hostname": "de.ssl.ipmy.us",
         "username": "tunvpn.com-{username}",
         "password": "{password}"
       }
