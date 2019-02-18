@@ -5,11 +5,12 @@ from .server_tunnel import *
 
 
 class server(threading.Thread):
-    def __init__(self, inject_host_port, quiet=False):
+    def __init__(self, inject_host_port, external=False, quiet=False):
         super(server, self).__init__()
 
         self.inject_host, self.inject_port = self.inject_host_port = inject_host_port
         self.socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.external = external
         self.quiet = quiet
 
         self.daemon = True
@@ -24,7 +25,7 @@ class server(threading.Thread):
             self.log('[G1]Inject running on {inject_host} port {inject_port}'.format(inject_host=self.inject_host, inject_port=self.inject_port))
             while True:
                 try:
-                    server_tunnel(self.socket_server.accept(), self.quiet).start()
+                    server_tunnel(self.socket_server.accept(), self.external, self.quiet).start()
                 except KeyboardInterrupt: pass
         except OSError:
             self.log('[R1]Inject not running on {inject_host} port {inject_port} because port used by another programs'.format(inject_host=self.inject_host, inject_port=self.inject_port), status_color='[R1]')

@@ -12,10 +12,11 @@ from .ssh_statistic import *
 
 
 class server_tunnel(threading.Thread):
-    def __init__(self, socket_accept, quiet=False):
+    def __init__(self, socket_accept, external=False, quiet=False):
         super(server_tunnel, self).__init__()
 
         self.socket_client, (self.client_host, self.client_port) = socket_accept
+        self.external = external
         self.quiet = quiet
 
         self.server_name_indication = open(real_path('/../config/server-name-indication.txt')).readlines()[0].strip()
@@ -38,8 +39,8 @@ class server_tunnel(threading.Thread):
     def log_error(self, value, status='INFO'):
         self.force_log('[R1]{}'.format(value), status=status, status_color='[R1]')
 
-    def log_exception(self, value):
-        log_exception(value, status='[R1]INFO')
+    def log_external(self, value, status='INFO', status_color='[G1]'):
+        if self.external: self.log(value, status=status, status_color=status_color)
 
     def extract_client_request(self):
         self.client_request = self.socket_client.recv(self.buffer_size).decode('charmap')
@@ -52,10 +53,12 @@ class server_tunnel(threading.Thread):
         return True
 
     def get_host_port(self, value):
-        result = re.findall(r'(([a-zA-Z0-9]+(\.[a-zA-Z0-9]+)+):(\d+))', value)
-        result = result[0] if len(result) else []
+        value = re.findall(r'(([a-zA-Z0-9]+(\.[a-zA-Z0-9]+)+)(:(\d+))?)', value)
+        value = value[0] if len(value) else []
+        value_host = value[1] if len(value) >= 2 and value[1] else ''
+        value_port = value[4] if len(value) >= 5 and value[4] else '80'
 
-        return result[1], int(result[3]) if len(result) else ''
+        return (value_host, int(value_port)) if value_host and value_port else ''
 
     def get_proxy(self):
         data_proxies = filter_array(open(real_path('/../config/proxies.txt')).readlines())
@@ -64,7 +67,8 @@ class server_tunnel(threading.Thread):
             proxy = self.get_host_port(proxy)
             if proxy: self.proxies.append(proxy)
 
-        if len(self.proxies): self.proxy_host, self.proxy_port = random.choice(self.proxies)
+        if len(self.proxies):
+            self.proxy_host, self.proxy_port = random.choice(self.proxies)
 
         return True if len(self.proxies) else False
 
@@ -113,16 +117,12 @@ class server_tunnel(threading.Thread):
         self.log('Certificate:\n\n{certificate}'.format(certificate=ssl.DER_cert_to_PEM_cert(self.socket_tunnel.getpeercert(True))))
 
     def convert_response(self, response):
+        response = response.replace('\r', '').rstrip() + '\n\n'
+
         if response.startswith('HTTP'):
-            response = '\n\n|   {}\n'.format(
-                response.replace('\r', '').split('\n\n')[0].replace('\n', '\n|   ')
-            )
+            response = '\n\n|   {}\n'.format(response.replace('\n', '\n|   '))
         else:
-            response = '[W2]\n\n{}\n'.format(
-                re.sub(
-                    r'\s+', ' ', response.replace('\r', '[CC][Y1]\\r[W2]').replace('\n', '[CC][Y1]\\n[W2]')
-                )
-            )
+            response = '[W2]\n\n{}\n'.format(re.sub(r'\s+', ' ', response.replace('\n', '[CC][Y1]\\n[W2]')))
 
         return response
 
@@ -158,7 +158,7 @@ class server_tunnel(threading.Thread):
             if not response: break
             response_status = response.replace('\r', '').split('\n')[0]
             if re.match(r'HTTP/\d(\.\d)? 200 .+', response_status):
-                self.log('Response: {}|\n|\n'.format(self.convert_response(response)))
+                self.log('Response: {}'.format(self.convert_response(response)))
                 self.handler()
                 break
             else:
@@ -174,9 +174,9 @@ class server_tunnel(threading.Thread):
             self.send_payload(self.get_payload())
             self.handler()
         except socket.timeout:
-            pass
+            self.log_external('Connection timeout', status_color='[R1]')
         except socket.error:
-            pass
+            self.log_external('Connection closed', status_color='[R1]')
         finally:
             self.socket_tunnel.close()
             self.socket_client.close()
@@ -191,9 +191,9 @@ class server_tunnel(threading.Thread):
             self.certificate()
             self.handler()
         except socket.timeout:
-            pass
+            self.log_external('Connection timeout', status_color='[R1]')
         except socket.error:
-            pass
+            self.log_external('Connection closed', status_color='[R1]')
         finally:
             self.socket_tunnel.close()
             self.socket_client.close()
@@ -210,9 +210,9 @@ class server_tunnel(threading.Thread):
             self.send_payload(self.get_payload())
             self.proxy_handler()
         except socket.timeout:
-            pass
+            self.log_external('Connection timeout', status_color='[R1]')
         except socket.error:
-            pass
+            self.log_external('Connection closed', status_color='[R1]')
         finally:
             self.socket_tunnel.close()
             self.socket_client.close()
@@ -224,7 +224,7 @@ class server_tunnel(threading.Thread):
         try:
             self.config_file = real_path('/../config/config.json')
             self.config = json.loads(open(self.config_file).read())
-            self.tunnel_type = str(self.config['tunnel_type'])
+            self.tunnel_type = self.config['tunnel_type'] if not self.external else self.config['tunnel_type_external']
             if not self.tunnel_type or int(self.tunnel_type) >= 3: raise KeyError
         except KeyError:
             json_error(self.config_file)

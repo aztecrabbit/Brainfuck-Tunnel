@@ -14,7 +14,7 @@ def main():
         inject_port = int(config['inject_port_external'])
     except KeyError: app.json_error(config_file); return
 
-    app.server((inject_host, inject_port)).run()
+    app.server((inject_host, inject_port), external=True).run()
 
 if __name__ == '__main__':
     main()

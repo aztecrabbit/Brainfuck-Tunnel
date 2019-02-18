@@ -18,7 +18,7 @@ def main():
     
     app.log('Inject set to {} port {}'.format(inject_host, inject_port))
 
-    ssh_clients = app.ssh_clients(inject_host, inject_port)
+    ssh_clients = app.ssh_clients((inject_host, inject_port), external=True)
     ssh_clients.accounts = app.generate_accounts(app.convert_hostnames(real_path('/database/accounts.json')))
 
     app.log('Type debug for debugging log')
@@ -46,7 +46,6 @@ def main():
 
             app.ssh_statistic('clear')
             for socks5_port in ssh_clients.socks5_port_list:
-                time.sleep(0.025)
                 thread = threading.Thread(target=ssh_clients.ssh_client, args=(ssh_clients.unique, socks5_port, ))
                 thread.daemon = True
                 thread.start()

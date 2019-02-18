@@ -23,7 +23,7 @@ def main():
 
     app.server((inject_host, inject_port), quiet=quiet).start()
 
-    ssh_clients = app.ssh_clients(inject_host, inject_port, socks5_port_list, log_connecting=log_connecting)
+    ssh_clients = app.ssh_clients((inject_host, inject_port), socks5_port_list, log_connecting=log_connecting)
     ssh_clients.accounts = app.generate_accounts(app.convert_hostnames(real_path('/database/accounts.json')))
     ssh_clients.start()
 

@@ -18,15 +18,15 @@ class ssh_clients(object):
     
     _connected = set()
 
-    def __init__(self, inject_host, inject_port, socks5_port_list=[], http_requests_enable=True, log_connecting=True, dynamic_port_forwarding=True):
+    def __init__(self, inject_host_port, socks5_port_list=[], external=False, http_requests_enable=True, log_connecting=True, dynamic_port_forwarding=True):
         super(ssh_clients, self).__init__()
 
+        self.inject_host, self.inject_port = self.inject_host_port = inject_host_port
         self.dynamic_port_forwarding = dynamic_port_forwarding
         self.http_requests_enable = http_requests_enable
         self.socks5_port_list = socks5_port_list
         self.log_connecting = log_connecting
-        self.inject_host = inject_host
-        self.inject_port = inject_port
+        self.external = external
 
         self.http_requests = http_requests(self.socks5_port_list, self.http_requests_enable)
         self.proxy_command = ''
@@ -44,7 +44,7 @@ class ssh_clients(object):
     def connected(self, socks5_port):
         self._connected.add(socks5_port)
         if len(self._connected) >= len(self.socks5_port_list):
-            self.log('[Y1]Connected', status='all', status_color='[Y1]')
+            self.log('Connected', status='all', status_color='[Y1]')
             self.http_requests = http_requests(self.socks5_port_list, self.http_requests_enable)
             self.http_requests.start()
 
@@ -61,14 +61,14 @@ class ssh_clients(object):
     def all_disconnected_listener(self):
         while True:
             if self.all_disconnected():
-                self.log('[R1]Disconnected', status='all', status_color='[R1]')
+                self.log('Disconnected', status='all', status_color='[R1]')
                 break
 
     def get_config(self):
         try:
             self.config_file = real_path('/../config/config.json')
             self.config = json.loads(open(self.config_file).read())
-            self.tunnel_type = self.config['tunnel_type']
+            self.tunnel_type = self.config['tunnel_type'] if not self.external else self.config['tunnel_type_external']
             self.proxy_command = self.config['proxy_command']
             if not self.tunnel_type or int(self.tunnel_type) >= 3: raise KeyError
             if str(self.proxy_command.strip()) == '': raise KeyError
@@ -84,7 +84,6 @@ class ssh_clients(object):
             try:
                 ssh_statistic('clear')
                 for socks5_port in self.socks5_port_list:
-                    time.sleep(0.025)
                     thread = threading.Thread(target=self.ssh_client, args=(self.unique, socks5_port, ))
                     thread.daemon = True
                     thread.start()
@@ -97,7 +96,6 @@ class ssh_clients(object):
 
     def ssh_client(self, unique, socks5_port):
         while self.unique == unique:
-            #subprocess.Popen('rm -rf ~/.ssh/known_hosts', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
 
             if self.get_config() is not None:
                 self.disconnected(socks5_port)
@@ -114,7 +112,7 @@ class ssh_clients(object):
             password = account['password']
 
             if self.log_connecting == True:
-                self.log('[G1]Connecting to {hostname} port {port}{end}'.format(hostname=hostname, port=port, end=' '*8), status=socks5_port)
+                self.log('[G1]Connecting to {hostname} port {port}{end}'.format(hostname=hostname, port=port, end='  '*4), status=socks5_port)
             
             response = subprocess.Popen(
                 (
@@ -144,13 +142,13 @@ class ssh_clients(object):
                     self.connected(socks5_port)
 
                 elif 'Permission denied' in line:
-                    self.log('[R1]Access Denied', status=socks5_port, status_color='[R1]')
+                    self.log('Access Denied', status=socks5_port, status_color='[R1]')
 
                 elif 'Connection closed' in line:
-                    self.log('[R1]Connection closed', status=socks5_port, status_color='[R1]')
+                    self.log_debug('Connection closed', status=socks5_port, status_color='[R1]')
 
                 elif 'Could not request local forwarding' in line:
-                    self.log('[R1]Port used by another programs', status=socks5_port, status_color='[R1]')
+                    self.log('Port used by another programs', status=socks5_port, status_color='[R1]')
                     unique -= 1
                     break
 
