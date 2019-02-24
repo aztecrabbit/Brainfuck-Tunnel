@@ -22,10 +22,10 @@ class server(threading.Thread):
         try:
             self.socket_server.bind(self.inject_host_port)
             self.socket_server.listen(True)
-            self.log('[G1]Inject running on {inject_host} port {inject_port}'.format(inject_host=self.inject_host, inject_port=self.inject_port))
+            self.log('Inject running on {inject_host} port {inject_port}'.format(inject_host=self.inject_host, inject_port=self.inject_port))
             while True:
                 try:
                     server_tunnel(self.socket_server.accept(), self.external, self.quiet).start()
                 except KeyboardInterrupt: pass
         except OSError:
-            self.log('[R1]Inject not running on {inject_host} port {inject_port} because port used by another programs'.format(inject_host=self.inject_host, inject_port=self.inject_port), status_color='[R1]')
+            self.log('Inject not running on {inject_host} port {inject_port} because port used by another programs'.format(inject_host=self.inject_host, inject_port=self.inject_port), status_color='[R1]')
