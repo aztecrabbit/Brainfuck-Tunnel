@@ -9,6 +9,7 @@ Requirements
 ### Packages
 
     nc (openbsd-version) (be aware if you are installing wrong nc)
+    git
     openssh
     sshpass
     python3
@@ -18,7 +19,7 @@ Requirements
 
 ### Using Termux on Android?
 
-    $ pkg install pip python openssh sshpass corkscrew
+    $ pkg install pip git python openssh sshpass corkscrew
 
 
 ### Using Cygwin on Windows?
@@ -100,7 +101,17 @@ Please googling for this topic or see `config/config.json` (run `reset.py` first
 Usage
 -----
 
+    $ git clone https://github.com/AztecRabbit/Brainfuck-Tunnel brainfuck-tunnel
+    $ cd brainfuck-tunnel; ls -l
     $ python3 (file-name)
+
+
+Update
+------
+
+    $ cd brainfuck-tunnel
+    $ git pull
+    $ python3 reset-database.py
 
 
 Note

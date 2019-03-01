@@ -72,19 +72,38 @@ def generate_accounts(data_accounts):
 
     return accounts
 
-def get_file_names():
-    return [
-        'config/config.json',
-        'config/proxies.txt',
-        'config/payload.txt',
-        'config/server-name-indication.txt',
-        'database/accounts.json',
-        'database/authentications.json',
-        'database/servers.json'
-    ]
+def get_file_names(value = 'all'):
+    file_names = []
+
+    if value == 'all':
+        file_names = [
+            'config/config.json',
+            'config/proxies.txt',
+            'config/payload.txt',
+            'config/server-name-indication.txt',
+            'database/accounts.json',
+            'database/authentications.json',
+            'database/servers.json'
+        ]
+    elif value == 'database':
+        file_names = [
+            'database/accounts.json',
+            'database/authentications.json',
+            'database/servers.json'
+        ]
+
+    return file_names
 
 def reset_to_default_settings():
-    for file_name in get_file_names():
+    for file_name in get_file_names('all'):
+        try:
+            os.remove(real_path('/../' + file_name))
+        except FileNotFoundError: pass
+
+    default_settings()
+
+def reset_database():
+    for file_name in get_file_names('database'):
         try:
             os.remove(real_path('/../' + file_name))
         except FileNotFoundError: pass
@@ -92,7 +111,7 @@ def reset_to_default_settings():
     default_settings()
 
 def default_settings():
-    for file_name in get_file_names():
+    for file_name in get_file_names('all'):
         try:
             open(real_path('/../' + file_name))
         except FileNotFoundError:
