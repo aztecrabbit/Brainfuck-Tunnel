@@ -27,7 +27,7 @@ def colors(value):
         'W1' : '\033[37;1m', 'W2' : '\033[37;2m'
     }
     for code in patterns:
-        value = value.replace('[{code}]'.format(code=code), patterns[code])
+        value = value.replace('[{}]'.format(code), patterns[code])
     return value
 
 def filter_array(array):

@@ -221,7 +221,7 @@
       },
       {
         "host": "157.230.239.6",
-        "hostname": "us2.ssl.ipmy.us",
+        "hostname": "#us2.ssl.ipmy.us",
         "username": "tunvpn.com-{username}",
         "password": "{password}"
       },

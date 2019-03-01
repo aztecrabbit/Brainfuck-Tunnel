@@ -38,7 +38,7 @@ def convert_hostnames(file_path):
                         data_accounts[name][i]['host'] = host
                         timeout = 0
                 except socket.gaierror:
-                    log('[{}/{}] Converting hostnames error'.format(app_format(timeout+1, align='>', width=len(str(length)), chars='0'), app_format('3', align='>', width=len(str(length)), chars='0')), status='INFO', status_color='[R1]')
+                    log('[{}/{}] Converting hostnames error ({})'.format(app_format(timeout+1, align='>', width=len(str(length)), chars='0'), app_format('3', align='>', width=len(str(length)), chars='0'), account['hostname']), status='INFO', status_color='[R1]')
                     timeout = timeout + 1
                 finally:
                     loop = loop + 1
