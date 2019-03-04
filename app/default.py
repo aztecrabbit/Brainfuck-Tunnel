@@ -49,8 +49,8 @@ def convert_hostnames(file_path):
 
     return data_accounts
 
-def generate_accounts(data_accounts):
-    data_authentications = json.loads(open(real_path('/../database/authentications.json')).read())['authentications']
+def generate_accounts(data_accounts, data_authentications=None):
+    data_authentications = json.loads(open(real_path('/../database/authentications.json')).read())['authentications'] if data_authentications is None else data_authentications
 
     accounts = []
 
@@ -58,6 +58,8 @@ def generate_accounts(data_accounts):
         for name in data_accounts:
             for x in range(len(data_accounts[name])):
                 account = data_accounts[name][x]
+                if not account: continue
+                account['hostname'] = account['hostname'].lstrip('#')
                 if check_hostname(account['hostname']) == False:
                     continue
                 accounts.append({

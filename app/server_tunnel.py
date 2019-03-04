@@ -12,10 +12,11 @@ from .ssh_statistic import *
 
 
 class server_tunnel(threading.Thread):
-    def __init__(self, socket_accept, external=False, quiet=False):
+    def __init__(self, socket_accept, force_tunnel_type=None, external=False, quiet=False):
         super(server_tunnel, self).__init__()
 
         self.socket_client, (self.client_host, self.client_port) = socket_accept
+        self.force_tunnel_type = force_tunnel_type
         self.external = external
         self.quiet = quiet
 
@@ -142,10 +143,10 @@ class server_tunnel(threading.Thread):
                         if not data: break
                         if socket is self.socket_tunnel:
                             self.socket_client.sendall(data)
-                            ssh_statistic('download')
+                            if self.quiet != 'full': ssh_statistic('download')
                         elif socket is self.socket_client:
                             self.socket_tunnel.sendall(data)
-                            ssh_statistic('upload')
+                            if self.quiet != 'full': ssh_statistic('upload')
                         timeout = 0
                     except: break
             if timeout == 30: break
@@ -237,6 +238,9 @@ class server_tunnel(threading.Thread):
             self.socket_tunnel.close()
             self.socket_client.close()
             return
+
+        if self.force_tunnel_type is not None:
+            self.tunnel_type = self.force_tunnel_type
 
         if not self.tunnel_type :
             pass
