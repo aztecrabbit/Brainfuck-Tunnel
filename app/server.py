@@ -10,6 +10,7 @@ class server(threading.Thread):
 
         self.inject_host, self.inject_port = self.inject_host_port = inject_host_port
         self.socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.force_tunnel_type = force_tunnel_type
         self.external = external
         self.quiet = quiet
